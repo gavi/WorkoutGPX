@@ -352,7 +352,6 @@ struct WorkoutDetailView: View {
     @State private var isLoading = false
     @State private var routeData: [CLLocation] = []
     @State private var exportError: String?
-    @State private var showShareSheet = false
     @State private var gpxURL: URL?
     
     var body: some View {
@@ -432,7 +431,13 @@ struct WorkoutDetailView: View {
         .navigationTitle(workoutActivityTypeString(workout.workoutActivityType))
         .navigationBarItems(trailing: 
             Button(action: {
-                showShareSheet = true
+                // Always export fresh GPX file before sharing
+                exportGPX()
+                
+                // Share the file using direct UIKit approach
+                if let url = gpxURL {
+                    shareFile(url: url)
+                }
             }) {
                 Image(systemName: "square.and.arrow.up")
             }
@@ -440,24 +445,6 @@ struct WorkoutDetailView: View {
         )
         .onAppear {
             loadRouteData()
-        }
-        .sheet(isPresented: $showShareSheet, onDismiss: nil) { 
-            if let url = gpxURL {
-                ShareSheet(items: [url])
-            } else {
-                Color.clear.onAppear {
-                    if !routeData.isEmpty {
-                        exportGPX()
-                        // Re-trigger the sheet to show the newly created file
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            if gpxURL != nil {
-                                showShareSheet = true
-                            }
-                        }
-                    }
-                    showShareSheet = false
-                }
-            }
         }
     }
     
@@ -556,6 +543,38 @@ struct WorkoutDetailView: View {
             return "Workout"
         }
     }
+    
+    // Direct UIKit sharing method to avoid SwiftUI sheet issues
+    private func shareFile(url: URL) {
+        // Get the current window scene
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let rootViewController = windowScene.windows.first?.rootViewController else {
+            return
+        }
+        
+        // Find the topmost presented view controller
+        var topController = rootViewController
+        while let presentedController = topController.presentedViewController {
+            topController = presentedController
+        }
+        
+        // Create and present the activity view controller
+        let activityViewController = UIActivityViewController(
+            activityItems: [url],
+            applicationActivities: nil
+        )
+        
+        // For iPad support
+        if let popoverController = activityViewController.popoverPresentationController {
+            popoverController.sourceView = topController.view
+            popoverController.sourceRect = CGRect(x: topController.view.bounds.midX, 
+                                                 y: topController.view.bounds.midY, 
+                                                 width: 0, height: 0)
+            popoverController.permittedArrowDirections = []
+        }
+        
+        topController.present(activityViewController, animated: true)
+    }
 }
 
 // Share sheet for sharing GPX files
@@ -564,6 +583,12 @@ struct ShareSheet: UIViewControllerRepresentable {
     
     func makeUIViewController(context: Context) -> UIActivityViewController {
         let controller = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        
+        // Prevent dismissal of activity view controller
+        controller.completionWithItemsHandler = { (activityType, completed, returnedItems, error) in
+            // This ensures the sharing sheet stays visible until user completes their action
+        }
+        
         return controller
     }
     
