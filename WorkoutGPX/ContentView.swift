@@ -4,9 +4,187 @@ import CoreLocation
 import MapKit
 
 
+// Workout filter view
+struct WorkoutFilterView: View {
+    @Binding var selectedWorkoutTypes: Set<HKWorkoutActivityType>
+    @Binding var startDate: Date
+    @Binding var endDate: Date
+    @Binding var showFilters: Bool
+    var refreshWorkouts: () async -> Void
+    
+    private let workoutTypes: [(HKWorkoutActivityType, String, String)] = [
+        (.running, "Running", "figure.run"),
+        (.walking, "Walking", "figure.walk"),
+        (.hiking, "Hiking", "mountain.2"),
+        (.cycling, "Cycling", "figure.outdoor.cycle")
+    ]
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            if showFilters {
+                Text("Filter Workouts")
+                    .font(.headline)
+                
+                // Workout type selector
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Workout Types")
+                        .font(.subheadline)
+                    
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 10) {
+                            ForEach(workoutTypes, id: \.0) { type, name, icon in
+                                Button(action: {
+                                    toggleWorkoutType(type)
+                                }) {
+                                    VStack {
+                                        Image(systemName: icon)
+                                            .font(.system(size: 20))
+                                        Text(name)
+                                            .font(.caption)
+                                    }
+                                    .frame(width: 70, height: 60)
+                                    .background(selectedWorkoutTypes.contains(type) ? Color.blue.opacity(0.2) : Color.gray.opacity(0.1))
+                                    .foregroundColor(selectedWorkoutTypes.contains(type) ? .blue : .primary)
+                                    .cornerRadius(8)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(selectedWorkoutTypes.contains(type) ? Color.blue : Color.clear, lineWidth: 2)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                // Date range selector
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Date Range")
+                        .font(.subheadline)
+                    
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text("Start Date")
+                                .font(.caption)
+                            DatePicker("", selection: $startDate, displayedComponents: [.date])
+                                .labelsHidden()
+                        }
+                        
+                        Spacer()
+                        
+                        VStack(alignment: .leading) {
+                            Text("End Date")
+                                .font(.caption)
+                            DatePicker("", selection: $endDate, displayedComponents: [.date])
+                                .labelsHidden()
+                        }
+                    }
+                    
+                    // Quick date presets
+                    HStack {
+                        QuickDateButton(title: "Last Week", action: {
+                            setLastWeek()
+                        })
+                        
+                        QuickDateButton(title: "Last Month", action: {
+                            setLastMonth()
+                        })
+                        
+                        QuickDateButton(title: "Last 3 Months", action: {
+                            setLastThreeMonths()
+                        })
+                        
+                        QuickDateButton(title: "Last Year", action: {
+                            setLastYear()
+                        })
+                    }
+                    
+                    // Apply filters button
+                    Button(action: {
+                        Task {
+                            await refreshWorkouts()
+                        }
+                    }) {
+                        HStack {
+                            Image(systemName: "arrow.clockwise")
+                            Text("Apply Filters")
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                    }
+                    .padding(.top)
+                }
+            }
+        }
+    }
+    
+    private func toggleWorkoutType(_ type: HKWorkoutActivityType) {
+        if selectedWorkoutTypes.contains(type) {
+            // Don't allow deselecting all types
+            if selectedWorkoutTypes.count > 1 {
+                selectedWorkoutTypes.remove(type)
+            }
+        } else {
+            selectedWorkoutTypes.insert(type)
+        }
+    }
+    
+    private func setLastWeek() {
+        endDate = Date()
+        startDate = Calendar.current.date(byAdding: .day, value: -7, to: endDate) ?? endDate
+    }
+    
+    private func setLastMonth() {
+        endDate = Date()
+        startDate = Calendar.current.date(byAdding: .month, value: -1, to: endDate) ?? endDate
+    }
+    
+    private func setLastThreeMonths() {
+        endDate = Date()
+        startDate = Calendar.current.date(byAdding: .month, value: -3, to: endDate) ?? endDate
+    }
+    
+    private func setLastYear() {
+        endDate = Date()
+        startDate = Calendar.current.date(byAdding: .year, value: -1, to: endDate) ?? endDate
+    }
+}
+
+// Quick date selection button
+struct QuickDateButton: View {
+    let title: String
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .font(.caption)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(Color.gray.opacity(0.15))
+                .cornerRadius(4)
+        }
+        .buttonStyle(BorderlessButtonStyle())
+    }
+}
+
 // Main content view
 struct ContentView: View {
     @StateObject private var healthStore = HealthStore()
+    @State private var showFilters = false
+    @State private var selectedWorkoutTypes: Set<HKWorkoutActivityType> = [.running, .walking, .hiking, .cycling]
+    @State private var startDate = Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date()
+    @State private var endDate = Date()
+    
+    var filteredWorkouts: [HKWorkout] {
+        healthStore.workouts.filter { workout in
+            let matchesType = selectedWorkoutTypes.contains(workout.workoutActivityType)
+            let isInDateRange = (workout.startDate >= startDate && workout.startDate <= endDate)
+            return matchesType && isInDateRange
+        }
+    }
     
     var body: some View {
         NavigationView {
@@ -33,23 +211,54 @@ struct ContentView: View {
                         }
                     }
                 } else {
+                    WorkoutFilterView(
+                        selectedWorkoutTypes: $selectedWorkoutTypes,
+                        startDate: $startDate,
+                        endDate: $endDate,
+                        showFilters: $showFilters,
+                        refreshWorkouts: refreshWorkouts
+                    )
+                    .padding(.horizontal)
+                    
+                    Text("\(filteredWorkouts.count) workouts")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    
                     List {
-                        ForEach(healthStore.workouts, id: \.uuid) { workout in
+                        ForEach(filteredWorkouts, id: \.uuid) { workout in
                             NavigationLink(destination: WorkoutDetailView(workout: workout, healthStore: healthStore)) {
                                 WorkoutRow(workout: workout)
                             }
                         }
                     }
                     .refreshable {
-                        await healthStore.fetchWorkouts()
+                        await refreshWorkouts()
                     }
                 }
             }
             .navigationTitle("Workout GPX Exporter")
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button(action: {
+                        showFilters.toggle()
+                    }) {
+                        Image(systemName: "line.3.horizontal.decrease.circle\(showFilters ? ".fill" : "")")
+                    }
+                }
+            }
             .onAppear {
                 healthStore.requestAuthorization()
             }
         }
+    }
+    
+    @MainActor
+    private func refreshWorkouts() async {
+        await healthStore.fetchWorkouts(
+            startDate: startDate,
+            endDate: endDate,
+            workoutTypes: selectedWorkoutTypes
+        )
     }
 }
 
@@ -528,27 +737,59 @@ class HealthStore: ObservableObject {
     
     @MainActor
     func fetchWorkouts() async {
-        let predicate = HKQuery.predicateForWorkouts(with: .greaterThanOrEqualTo, duration: 1.0)
+        // Default to fetching last 3 years of workouts
+        let calendar = Calendar.current
+        let threeYearsAgo = calendar.date(byAdding: .year, value: -3, to: Date()) ?? Date()
+        
+        await fetchWorkouts(
+            startDate: threeYearsAgo, 
+            endDate: Date(),
+            workoutTypes: Set(relevantWorkoutTypes),
+            limit: 500
+        )
+    }
+    
+    @MainActor
+    func fetchWorkouts(
+        startDate: Date,
+        endDate: Date,
+        workoutTypes: Set<HKWorkoutActivityType>,
+        limit: Int = 500
+    ) async {
+        // Time range predicate
+        let datePredicate = HKQuery.predicateForSamples(
+            withStart: startDate,
+            end: endDate,
+            options: .strictStartDate
+        )
+        
+        // Workout type predicates
+        let typesPredicates = workoutTypes.map { type in
+            HKQuery.predicateForWorkouts(with: type)
+        }
+        
+        // Combine all predicates
+        var predicates: [NSPredicate] = [datePredicate]
+        if !typesPredicates.isEmpty {
+            predicates.append(NSCompoundPredicate(orPredicateWithSubpredicates: typesPredicates))
+        }
+        
+        let finalPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
         
         let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
         
         let query = HKSampleQuery(
             sampleType: HKObjectType.workoutType(),
-            predicate: predicate,
-            limit: 100,
+            predicate: finalPredicate,
+            limit: limit,
             sortDescriptors: [sortDescriptor]
         ) { [weak self] query, samples, error in
             guard let workouts = samples as? [HKWorkout], error == nil else {
                 return
             }
             
-            // Filter to relevant workout types
-            let filteredWorkouts = workouts.filter { workout in
-                self?.relevantWorkoutTypes.contains(workout.workoutActivityType) ?? false
-            }
-            
             DispatchQueue.main.async {
-                self?.workouts = filteredWorkouts
+                self?.workouts = workouts
             }
         }
         
