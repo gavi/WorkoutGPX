@@ -351,13 +351,12 @@ struct WorkoutDetailView: View {
     
     @State private var isLoading = false
     @State private var routeData: [CLLocation] = []
-    @State private var exportSuccess = false
     @State private var exportError: String?
     @State private var showShareSheet = false
     @State private var gpxURL: URL?
     
     var body: some View {
-        VStack {
+        ZStack {
             if isLoading {
                 ProgressView("Loading route data...")
             } else if let exportError = exportError {
@@ -394,75 +393,70 @@ struct WorkoutDetailView: View {
                         .padding()
                 }
             } else {
-                // Workout info section
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Route with \(routeData.count) data points")
-                        .font(.headline)
-                    
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text("Started: \(workout.startDate, style: .date) \(workout.startDate, style: .time)")
-                                .font(.subheadline)
-                            
-                            Text("Ended: \(workout.endDate, style: .date) \(workout.endDate, style: .time)")
-                                .font(.subheadline)
-                        }
-                        
-                        Spacer()
-                        
-                        if let distance = workout.totalDistance?.doubleValue(for: .meter()) {
-                            Text(String(format: "%.2f km", distance / 1000))
-                                .font(.headline)
-                        }
-                    }
-                }
-                .padding(.horizontal)
+                // Full screen map
+                MapView(routeLocations: routeData)
+                    .ignoresSafeArea(edges: .bottom)
                 
-                // Map view
-                if !routeData.isEmpty {
-                    MapView(routeLocations: routeData)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 300)
-                        .cornerRadius(12)
-                        .padding()
-                }
-                
-                if exportSuccess {
-                    VStack {
-                        Image(systemName: "checkmark.circle")
-                            .font(.system(size: 30))
-                            .foregroundColor(.green)
-                        
-                        Text("GPX File Created Successfully!")
+                VStack {
+                    // Floating workout info section with transparency
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Route with \(routeData.count) data points")
                             .font(.headline)
+                        
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text("Started: \(workout.startDate, style: .date) \(workout.startDate, style: .time)")
+                                    .font(.subheadline)
+                                
+                                Text("Ended: \(workout.endDate, style: .date) \(workout.endDate, style: .time)")
+                                    .font(.subheadline)
+                            }
+                            
+                            Spacer()
+                            
+                            if let distance = workout.totalDistance?.doubleValue(for: .meter()) {
+                                Text(String(format: "%.2f km", distance / 1000))
+                                    .font(.headline)
+                            }
+                        }
                     }
                     .padding()
+                    .background(Color(UIColor.systemBackground).opacity(0.8))
+                    .cornerRadius(12)
+                    .padding([.horizontal, .top])
+                    
+                    Spacer()
                 }
-                
-                Spacer()
             }
         }
         .navigationTitle(workoutActivityTypeString(workout.workoutActivityType))
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button(action: {
-                    if !routeData.isEmpty && gpxURL == nil {
-                        exportGPX()
-                    } else if let _ = gpxURL {
-                        showShareSheet = true
-                    }
-                }) {
-                    Image(systemName: gpxURL == nil ? "square.and.arrow.down" : "square.and.arrow.up")
-                }
-                .disabled(routeData.isEmpty || isLoading)
+        .navigationBarItems(trailing: 
+            Button(action: {
+                showShareSheet = true
+            }) {
+                Image(systemName: "square.and.arrow.up")
             }
-        }
+            .disabled(routeData.isEmpty || isLoading)
+        )
         .onAppear {
             loadRouteData()
         }
-        .sheet(isPresented: $showShareSheet) {
+        .sheet(isPresented: $showShareSheet, onDismiss: nil) { 
             if let url = gpxURL {
                 ShareSheet(items: [url])
+            } else {
+                Color.clear.onAppear {
+                    if !routeData.isEmpty {
+                        exportGPX()
+                        // Re-trigger the sheet to show the newly created file
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            if gpxURL != nil {
+                                showShareSheet = true
+                            }
+                        }
+                    }
+                    showShareSheet = false
+                }
             }
         }
     }
@@ -507,7 +501,6 @@ struct WorkoutDetailView: View {
             try gpxString.write(to: fileURL, atomically: true, encoding: .utf8)
             
             self.gpxURL = fileURL
-            exportSuccess = true
         } catch {
             exportError = "Failed to save GPX file: \(error.localizedDescription)"
         }
