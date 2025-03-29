@@ -178,7 +178,8 @@ struct ContentView: View {
     @State private var startDate = Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date()
     @State private var endDate = Date()
     @State private var isLoading = true
-    
+    @Environment(\.scenePhase) private var scenePhase
+
     var filteredWorkouts: [HKWorkout] {
         healthStore.workouts.filter { workout in
             let matchesType = selectedWorkoutTypes.contains(workout.workoutActivityType)
@@ -191,6 +192,7 @@ struct ContentView: View {
         NavigationView {
             VStack {
                 if isLoading {
+                    // Loading state
                     VStack(spacing: 20) {
                         ProgressView()
                         Text("Loading workouts...")
@@ -213,7 +215,32 @@ struct ContentView: View {
                             .padding()
                         }
                     }
+                } else if !healthStore.authorized {
+                    // Unauthorized state (after loading)
+                    VStack(spacing: 20) {
+                        Image(systemName: "xmark.shield")
+                            .font(.system(size: 50))
+                            .foregroundColor(.red)
+                        
+                        Text("Health access not authorized")
+                            .font(.headline)
+                            .foregroundColor(.red)
+                        
+                        Button("Request Authorization") {
+                            Task {
+                                await healthStore.requestAuthorization()
+                            }
+                        }
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(10)
+                    }
+                    .padding()
                 } else {
+                    // Authorized state (after loading)
+                    
+                    // Filter section
                     WorkoutFilterView(
                         selectedWorkoutTypes: $selectedWorkoutTypes,
                         startDate: $startDate,
@@ -227,7 +254,9 @@ struct ContentView: View {
                         .font(.caption)
                         .foregroundColor(.secondary)
                     
+                    // Content section
                     if filteredWorkouts.isEmpty {
+                        // Empty state
                         VStack(spacing: 20) {
                             Image(systemName: "figure.walk")
                                 .font(.system(size: 50))
@@ -241,6 +270,7 @@ struct ContentView: View {
                         }
                         .padding()
                     } else {
+                        // Workout list
                         List {
                             ForEach(filteredWorkouts, id: \.uuid) { workout in
                                 NavigationLink(destination: WorkoutDetailView(workout: workout, healthStore: healthStore)) {
@@ -262,7 +292,7 @@ struct ContentView: View {
                     }) {
                         Image(systemName: "line.3.horizontal.decrease.circle\(showFilters ? ".fill" : "")")
                     }
-                    .disabled(isLoading)
+                    .disabled(isLoading || !healthStore.authorized)
                 }
             }
             .onAppear {
@@ -271,8 +301,14 @@ struct ContentView: View {
                     isLoading = false
                 }
             }
+        }.onChange(of: scenePhase) { newPhase in
+            if newPhase == .active {
+                Task {
+                    await refreshWorkouts()
+                }
+            }
         }
-        .navigationViewStyle(StackNavigationViewStyle()) // This forces a stack style instead of split view
+        .navigationViewStyle(StackNavigationViewStyle())
     }
     
     @MainActor
