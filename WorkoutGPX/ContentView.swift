@@ -177,6 +177,7 @@ struct ContentView: View {
     @State private var selectedWorkoutTypes: Set<HKWorkoutActivityType> = [.running, .walking, .hiking, .cycling]
     @State private var startDate = Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date()
     @State private var endDate = Date()
+    @State private var isLoading = true
     
     var filteredWorkouts: [HKWorkout] {
         healthStore.workouts.filter { workout in
@@ -189,7 +190,7 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             VStack {
-                if healthStore.workouts.isEmpty {
+                if isLoading {
                     VStack(spacing: 20) {
                         ProgressView()
                         Text("Loading workouts...")
@@ -200,7 +201,9 @@ struct ContentView: View {
                                     .font(.headline)
                                     .foregroundColor(.red)
                                 Button("Request Authorization") {
-                                    healthStore.requestAuthorization()
+                                    Task {
+                                        await healthStore.requestAuthorization()
+                                    }
                                 }
                                 .padding()
                                 .background(Color.blue)
@@ -224,15 +227,30 @@ struct ContentView: View {
                         .font(.caption)
                         .foregroundColor(.secondary)
                     
-                    List {
-                        ForEach(filteredWorkouts, id: \.uuid) { workout in
-                            NavigationLink(destination: WorkoutDetailView(workout: workout, healthStore: healthStore)) {
-                                WorkoutRow(workout: workout)
+                    if filteredWorkouts.isEmpty {
+                        VStack(spacing: 20) {
+                            Image(systemName: "figure.walk")
+                                .font(.system(size: 50))
+                                .foregroundColor(.gray)
+                            
+                            Text("No workouts found")
+                                .font(.headline)
+                            
+                            Text("Try adjusting your filters or timeframe")
+                                .foregroundColor(.secondary)
+                        }
+                        .padding()
+                    } else {
+                        List {
+                            ForEach(filteredWorkouts, id: \.uuid) { workout in
+                                NavigationLink(destination: WorkoutDetailView(workout: workout, healthStore: healthStore)) {
+                                    WorkoutRow(workout: workout)
+                                }
                             }
                         }
-                    }
-                    .refreshable {
-                        await refreshWorkouts()
+                        .refreshable {
+                            await refreshWorkouts()
+                        }
                     }
                 }
             }
@@ -244,21 +262,27 @@ struct ContentView: View {
                     }) {
                         Image(systemName: "line.3.horizontal.decrease.circle\(showFilters ? ".fill" : "")")
                     }
+                    .disabled(isLoading)
                 }
             }
             .onAppear {
-                healthStore.requestAuthorization()
+                Task {
+                    await healthStore.requestAuthorization()
+                    isLoading = false
+                }
             }
         }
     }
     
     @MainActor
     private func refreshWorkouts() async {
+        isLoading = true
         await healthStore.fetchWorkouts(
             startDate: startDate,
             endDate: endDate,
             workoutTypes: selectedWorkoutTypes
         )
+        isLoading = false
     }
 }
 
@@ -429,7 +453,7 @@ struct WorkoutDetailView: View {
             }
         }
         .navigationTitle(workoutActivityTypeString(workout.workoutActivityType))
-        .navigationBarItems(trailing: 
+        .navigationBarItems(trailing:
             Button(action: {
                 // Always export fresh GPX file before sharing
                 exportGPX()
@@ -567,8 +591,8 @@ struct WorkoutDetailView: View {
         // For iPad support
         if let popoverController = activityViewController.popoverPresentationController {
             popoverController.sourceView = topController.view
-            popoverController.sourceRect = CGRect(x: topController.view.bounds.midX, 
-                                                 y: topController.view.bounds.midY, 
+            popoverController.sourceRect = CGRect(x: topController.view.bounds.midX,
+                                                 y: topController.view.bounds.midY,
                                                  width: 0, height: 0)
             popoverController.permittedArrowDirections = []
         }
@@ -733,25 +757,25 @@ class HealthStore: ObservableObject {
     
     init() {}
     
-    func requestAuthorization() {
-        // Define the types to read
-        let typesToRead: Set<HKObjectType> = [
-            HKObjectType.workoutType(),
-            HKSeriesType.workoutRoute()
-        ]
-        
-        // Request authorization
-        healthStore.requestAuthorization(toShare: nil, read: typesToRead) { [weak self] success, error in
-            DispatchQueue.main.async {
-                self?.authorized = success
-                if success {
-                    Task {
-                        await self?.fetchWorkouts()
-                    }
-                }
-            }
-        }
-    }
+    @MainActor
+       func requestAuthorization() async {
+           // Define the types to read
+           let typesToRead: Set<HKSampleType> = [
+               HKObjectType.workoutType(),
+               HKSeriesType.workoutRoute()
+           ]
+           
+           do {
+               // Request authorization using async/await
+               try await healthStore.requestAuthorization(toShare: Set<HKSampleType>(), read: typesToRead)
+               self.authorized = true
+               // Fetch workouts immediately after authorization
+               await self.fetchWorkouts()
+           } catch {
+               print("Authorization failed: \(error.localizedDescription)")
+               self.authorized = false
+           }
+       }
     
     @MainActor
     func fetchWorkouts() async {
@@ -760,7 +784,7 @@ class HealthStore: ObservableObject {
         let threeYearsAgo = calendar.date(byAdding: .year, value: -3, to: Date()) ?? Date()
         
         await fetchWorkouts(
-            startDate: threeYearsAgo, 
+            startDate: threeYearsAgo,
             endDate: Date(),
             workoutTypes: Set(relevantWorkoutTypes),
             limit: 500
@@ -774,6 +798,11 @@ class HealthStore: ObservableObject {
         workoutTypes: Set<HKWorkoutActivityType>,
         limit: Int = 500
     ) async {
+        guard authorized else {
+            print("Not authorized to fetch workouts")
+            return
+        }
+        
         // Time range predicate
         let datePredicate = HKQuery.predicateForSamples(
             withStart: startDate,
@@ -796,22 +825,41 @@ class HealthStore: ObservableObject {
         
         let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
         
-        let query = HKSampleQuery(
-            sampleType: HKObjectType.workoutType(),
-            predicate: finalPredicate,
-            limit: limit,
-            sortDescriptors: [sortDescriptor]
-        ) { [weak self] query, samples, error in
-            guard let workouts = samples as? [HKWorkout], error == nil else {
-                return
+        do {
+            // Using async/await pattern for the query
+            let samples = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[HKSample], Error>) in
+                let query = HKSampleQuery(
+                    sampleType: HKObjectType.workoutType(),
+                    predicate: finalPredicate,
+                    limit: limit,
+                    sortDescriptors: [sortDescriptor]
+                ) { _, samples, error in
+                    if let error = error {
+                        continuation.resume(throwing: error)
+                        return
+                    }
+                    
+                    guard let samples = samples else {
+                        continuation.resume(returning: [])
+                        return
+                    }
+                    
+                    continuation.resume(returning: samples)
+                }
+                
+                self.healthStore.execute(query)
             }
             
-            DispatchQueue.main.async {
-                self?.workouts = workouts
+            // Update the workouts on the main actor
+            self.workouts = samples as? [HKWorkout] ?? []
+            
+        } catch {
+            print("Error fetching workouts: \(error.localizedDescription)")
+            // Ensure we don't leave the workouts array empty if there's an error
+            if self.workouts.isEmpty {
+                self.workouts = []
             }
         }
-        
-        healthStore.execute(query)
     }
     
     func fetchRouteData(for workout: HKWorkout, completion: @escaping ([CLLocation]?, Error?) -> Void) {
@@ -856,6 +904,6 @@ class HealthStore: ObservableObject {
             self.healthStore.execute(routeDataQuery)
         }
         
-        healthStore.execute(routeQuery)
+        self.healthStore.execute(routeQuery)
     }
 }
