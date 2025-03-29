@@ -272,6 +272,7 @@ struct ContentView: View {
                 }
             }
         }
+        .navigationViewStyle(StackNavigationViewStyle()) // This forces a stack style instead of split view
     }
     
     @MainActor
@@ -758,24 +759,24 @@ class HealthStore: ObservableObject {
     init() {}
     
     @MainActor
-       func requestAuthorization() async {
-           // Define the types to read
-           let typesToRead: Set<HKSampleType> = [
-               HKObjectType.workoutType(),
-               HKSeriesType.workoutRoute()
-           ]
-           
-           do {
-               // Request authorization using async/await
-               try await healthStore.requestAuthorization(toShare: Set<HKSampleType>(), read: typesToRead)
-               self.authorized = true
-               // Fetch workouts immediately after authorization
-               await self.fetchWorkouts()
-           } catch {
-               print("Authorization failed: \(error.localizedDescription)")
-               self.authorized = false
-           }
-       }
+    func requestAuthorization() async {
+        // Define the types to read
+        let typesToRead: Set<HKSampleType> = [
+            HKObjectType.workoutType(),
+            HKSeriesType.workoutRoute()
+        ]
+        
+        do {
+            // Request authorization using async/await
+            try await healthStore.requestAuthorization(toShare: Set<HKSampleType>(), read: typesToRead)
+            self.authorized = true
+            // Fetch workouts immediately after authorization
+            await self.fetchWorkouts()
+        } catch {
+            print("Authorization failed: \(error.localizedDescription)")
+            self.authorized = false
+        }
+    }
     
     @MainActor
     func fetchWorkouts() async {
