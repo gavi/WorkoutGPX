@@ -18,6 +18,13 @@ class HealthStore: ObservableObject {
     
     @MainActor
     func requestAuthorization() async {
+        // Check if HealthKit is available on this device
+        guard HKHealthStore.isHealthDataAvailable() else {
+            print("HealthKit is not available on this device")
+            self.authorized = false
+            return
+        }
+        
         // Define the types to read
         let typesToRead: Set<HKSampleType> = [
             HKObjectType.workoutType(),
@@ -27,11 +34,64 @@ class HealthStore: ObservableObject {
         do {
             // Request authorization using async/await
             try await healthStore.requestAuthorization(toShare: Set<HKSampleType>(), read: typesToRead)
-            self.authorized = true
-            // Fetch workouts immediately after authorization
-            await self.fetchWorkouts()
+            
+            // After requesting authorization, we need to check if we actually have read access
+            // We'll try to do a test query to confirm access
+            await checkAuthorization()
+            
         } catch {
-            print("Authorization failed: \(error.localizedDescription)")
+            print("Authorization request failed: \(error.localizedDescription)")
+            self.authorized = false
+        }
+    }
+    
+    @MainActor
+    func checkAuthorization() async {
+        // First check the reported status
+        let workoutType = HKObjectType.workoutType()
+        let status = healthStore.authorizationStatus(for: workoutType)
+        
+        print("HealthKit authorization status for workouts: \(status)")
+        
+        if status == .notDetermined {
+            // If status is not determined, we definitely don't have access
+            print("HealthKit access not determined yet")
+            self.authorized = false
+            return
+        }
+        
+        // Even if status is sharingDenied, we might still have read access
+        // Let's test with a sample query to be sure
+        let lastMonth = Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date()
+        let predicate = HKQuery.predicateForSamples(withStart: lastMonth, end: Date(), options: [])
+        
+        do {
+            let samples = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[HKSample], Error>) in
+                let query = HKSampleQuery(
+                    sampleType: workoutType,
+                    predicate: predicate,
+                    limit: 1,
+                    sortDescriptors: nil
+                ) { _, samples, error in
+                    if let error = error {
+                        continuation.resume(throwing: error)
+                        return
+                    }
+                    
+                    continuation.resume(returning: samples ?? [])
+                }
+                
+                self.healthStore.execute(query)
+            }
+            
+            // If we get here without error, we have read access
+            // Note: This can return an empty array even if we have access
+            print("Successfully queried HealthKit, found \(samples.count) samples")
+            self.authorized = true
+            
+        } catch {
+            print("Error testing HealthKit access: \(error.localizedDescription)")
+            // If we get an error performing the query, we likely don't have access
             self.authorized = false
         }
     }
@@ -57,8 +117,12 @@ class HealthStore: ObservableObject {
         workoutTypes: Set<HKWorkoutActivityType>,
         limit: Int = 500
     ) async {
+        // First, verify we still have access
+        await checkAuthorization()
+        
         guard authorized else {
             print("Not authorized to fetch workouts")
+            self.workouts = []
             return
         }
         
@@ -111,13 +175,11 @@ class HealthStore: ObservableObject {
             
             // Update the workouts on the main actor
             self.workouts = samples as? [HKWorkout] ?? []
+            print("Successfully fetched \(self.workouts.count) workouts")
             
         } catch {
             print("Error fetching workouts: \(error.localizedDescription)")
-            // Ensure we don't leave the workouts array empty if there's an error
-            if self.workouts.isEmpty {
-                self.workouts = []
-            }
+            self.workouts = []
         }
     }
     
