@@ -167,6 +167,9 @@ struct ContentView: View {
                     // Re-check authorization every time the app becomes active
                     await healthStore.requestAuthorization()
                     
+                    // Update end date to current time when app becomes active
+                    endDate = Date()
+                    
                     // Only refresh workouts if authorized
                     if healthStore.authorized {
                         await refreshWorkouts()
