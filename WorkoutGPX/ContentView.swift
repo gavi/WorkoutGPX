@@ -187,6 +187,9 @@ struct ContentView: View {
     private func refreshWorkouts() async {
         isLoading = true
         
+        // Update endDate to current time when refreshing
+        endDate = Date()
+        
         // First verify authorization status
         await healthStore.requestAuthorization()
         
