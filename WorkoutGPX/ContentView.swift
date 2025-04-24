@@ -51,7 +51,7 @@ struct ContentView: View {
                                     await healthStore.requestAuthorization()
                                     // Force UI update
                                     isLoading = true
-                                    await Task.sleep(500_000_000) // Half second delay
+                                    try? await Task.sleep(nanoseconds: 500_000_000) // Half second delay
                                     isLoading = false
                                 }
                             }
@@ -131,6 +131,11 @@ struct ContentView: View {
             }
             .navigationTitle("Workout GPX Exporter")
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    NavigationLink(destination: SettingsView()) {
+                        Image(systemName: "gear")
+                    }
+                }
                 ToolbarItem(placement: .primaryAction) {
                     Button(action: {
                         showFilters.toggle()

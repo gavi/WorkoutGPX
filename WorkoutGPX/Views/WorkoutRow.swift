@@ -4,6 +4,7 @@ import HealthKit
 // Row showing workout information
 struct WorkoutRow: View {
     let workout: HKWorkout
+    @EnvironmentObject var settings: SettingsModel
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -28,7 +29,7 @@ struct WorkoutRow: View {
                         .font(.subheadline)
                     
                     if let distance = workout.totalDistance?.doubleValue(for: .meter()) {
-                        Text(String(format: "%.2f km", distance / 1000))
+                        Text(settings.formatDistance(distance))
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     }

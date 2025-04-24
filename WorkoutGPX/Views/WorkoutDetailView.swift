@@ -7,6 +7,7 @@ import MapKit
 struct WorkoutDetailView: View {
     let workout: HKWorkout
     let healthStore: HealthStore
+    @EnvironmentObject var settings: SettingsModel
     
     @State private var isLoading = false
     @State private var routeData: [CLLocation] = []
@@ -73,7 +74,7 @@ struct WorkoutDetailView: View {
                             Spacer()
                             
                             if let distance = workout.totalDistance?.doubleValue(for: .meter()) {
-                                Text(String(format: "%.2f km", distance / 1000))
+                                Text(settings.formatDistance(distance))
                                     .font(.headline)
                             }
                         }

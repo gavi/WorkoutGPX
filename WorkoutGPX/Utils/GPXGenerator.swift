@@ -1,6 +1,7 @@
 import Foundation
 import HealthKit
 import CoreLocation
+import SwiftUI
 
 func generateGPX(for workout: HKWorkout, routeData: [CLLocation]) -> String {
     var gpx = """
@@ -47,8 +48,12 @@ func exportGPX(for workout: HKWorkout, routeData: [CLLocation]) -> URL? {
         formatter.dateFormat = "yyyy-MM-dd_HH-mm-ss"
         let dateString = formatter.string(from: workout.startDate)
         
+        // Get the settings to include unit system in filename
+        let useMetric = UserDefaults.standard.object(forKey: "useMetricSystem") as? Bool ?? true
+        let unitSystem = useMetric ? "km" : "mi"
+        
         let activityType = workoutActivityTypeString(workout.workoutActivityType)
-        let filename = "\(activityType)_\(dateString).gpx"
+        let filename = "\(activityType)_\(dateString)_\(unitSystem).gpx"
         let fileURL = documentsDirectory.appendingPathComponent(filename)
         
         try gpxString.write(to: fileURL, atomically: true, encoding: .utf8)
@@ -59,3 +64,4 @@ func exportGPX(for workout: HKWorkout, routeData: [CLLocation]) -> URL? {
         return nil
     }
 }
+
