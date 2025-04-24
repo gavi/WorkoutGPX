@@ -105,12 +105,8 @@ struct WorkoutDetailView: View {
                                     
                                     Spacer()
                                     
-                                    // Elevation color legend with better gradient
-                                    VStack(spacing: 2) {
-                                        Text("Elevation")
-                                            .font(.caption2)
-                                            .frame(maxWidth: .infinity, alignment: .center)
-                                            
+                                    // Elevation color legend
+                                    HStack(spacing: 8) {
                                         // Gradient color bar
                                         LinearGradient(
                                             gradient: Gradient(colors: [
@@ -121,20 +117,25 @@ struct WorkoutDetailView: View {
                                             startPoint: .bottom,
                                             endPoint: .top
                                         )
-                                        .frame(width: 20, height: 60)
-                                        .cornerRadius(4)
+                                        .frame(width: 8, height: 40)
+                                        .cornerRadius(3)
                                         
-                                        Text("High")
-                                            .font(.system(size: 8))
-                                            .foregroundColor(.secondary)
-                                        
-                                        Spacer().frame(height: 40)
-                                        
-                                        Text("Low")
-                                            .font(.system(size: 8))
-                                            .foregroundColor(.secondary)
+                                        // Labels next to the gradient
+                                        VStack(alignment: .leading) {
+                                            Text("High")
+                                                .font(.system(size: 8))
+                                                .foregroundColor(.secondary)
+                                            
+                                            Spacer()
+                                            
+                                            Text("Low")
+                                                .font(.system(size: 8))
+                                                .foregroundColor(.secondary)
+                                        }
+                                        .padding(.vertical, 2)
                                     }
-                                    .padding(.vertical, 4)
+                                    .frame(height: 44)
+                                    .padding(.vertical, 2)
                                     .padding(.horizontal, 6)
                                     .background(Color(UIColor.systemBackground).opacity(0.7))
                                     .cornerRadius(6)
