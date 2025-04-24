@@ -8,6 +8,15 @@ struct SettingsView: View {
             Section(header: Text("Units")) {
                 Toggle("Use Metric System (km)", isOn: $settings.useMetricSystem)
             }
+            
+            Section(header: Text("Map")) {
+                Picker("Map Style", selection: $settings.mapStyle) {
+                    ForEach(MapStyle.allCases) { style in
+                        Text(style.rawValue).tag(style)
+                    }
+                }
+                .pickerStyle(SegmentedPickerStyle())
+            }
         }
         .navigationTitle("Settings")
     }

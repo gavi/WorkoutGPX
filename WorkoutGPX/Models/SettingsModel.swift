@@ -1,5 +1,33 @@
 import Foundation
 import SwiftUI
+import MapKit
+
+enum MapStyle: String, CaseIterable, Identifiable {
+    case standard = "Standard"
+    case satellite = "Satellite"
+    case hybrid = "Hybrid"
+    
+    var id: String { self.rawValue }
+    
+    #if swift(>=5.7) && canImport(MapKit) && !targetEnvironment(macCatalyst)
+    @available(iOS 16.0, *)
+    var mapConfiguration: MKMapConfiguration {
+        switch self {
+        case .standard: return MKStandardMapConfiguration()
+        case .satellite: return MKImageryMapConfiguration()
+        case .hybrid: return MKHybridMapConfiguration()
+        }
+    }
+    #endif
+    
+    var mapType: MKMapType {
+        switch self {
+        case .standard: return .standard
+        case .satellite: return .satellite
+        case .hybrid: return .hybrid
+        }
+    }
+}
 
 class SettingsModel: ObservableObject {
     @Published var useMetricSystem: Bool {
@@ -8,8 +36,21 @@ class SettingsModel: ObservableObject {
         }
     }
     
+    @Published var mapStyle: MapStyle {
+        didSet {
+            UserDefaults.standard.set(mapStyle.rawValue, forKey: "mapStyle")
+        }
+    }
+    
     init() {
         self.useMetricSystem = UserDefaults.standard.bool(forKey: "useMetricSystem", defaultValue: true)
+        
+        if let savedMapStyle = UserDefaults.standard.string(forKey: "mapStyle"),
+           let style = MapStyle(rawValue: savedMapStyle) {
+            self.mapStyle = style
+        } else {
+            self.mapStyle = .standard
+        }
     }
     
     func formatDistance(_ distanceInMeters: Double) -> String {

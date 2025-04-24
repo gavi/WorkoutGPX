@@ -54,6 +54,7 @@ struct WorkoutDetailView: View {
             } else {
                 // Full screen map
                 MapView(routeLocations: routeData)
+                    .environmentObject(settings)
                     .ignoresSafeArea(edges: .bottom)
                 
                 VStack {
