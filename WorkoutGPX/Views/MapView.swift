@@ -5,11 +5,22 @@ import CoreLocation
 // UIViewRepresentable for MapKit
 struct MapView: UIViewRepresentable {
     let routeLocations: [CLLocation]
+    @EnvironmentObject var settings: SettingsModel
     
     func makeUIView(context: Context) -> MKMapView {
         let mapView = MKMapView()
         mapView.delegate = context.coordinator
         mapView.showsUserLocation = false
+        
+        #if swift(>=5.7) && canImport(MapKit) && !targetEnvironment(macCatalyst)
+        if #available(iOS 16.0, *) {
+            mapView.preferredConfiguration = settings.mapStyle.mapConfiguration
+        } else {
+            mapView.mapType = settings.mapStyle.mapType
+        }
+        #else
+        mapView.mapType = settings.mapStyle.mapType
+        #endif
         
         // Add polyline
         if !routeLocations.isEmpty {
@@ -39,7 +50,16 @@ struct MapView: UIViewRepresentable {
     }
     
     func updateUIView(_ mapView: MKMapView, context: Context) {
-        // Updates handled in makeUIView
+        // Update map configuration if settings changed
+        #if swift(>=5.7) && canImport(MapKit) && !targetEnvironment(macCatalyst)
+        if #available(iOS 16.0, *) {
+            mapView.preferredConfiguration = settings.mapStyle.mapConfiguration
+        } else {
+            mapView.mapType = settings.mapStyle.mapType
+        }
+        #else
+        mapView.mapType = settings.mapStyle.mapType
+        #endif
     }
     
     private func setRegion(for mapView: MKMapView) {
