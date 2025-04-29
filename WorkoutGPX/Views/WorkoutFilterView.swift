@@ -7,7 +7,7 @@ struct WorkoutFilterView: View {
     @Binding var startDate: Date
     @Binding var endDate: Date
     @Binding var showFilters: Bool
-    var refreshWorkouts: () async -> Void
+    var applyFilters: () async -> Void
     
     private let workoutTypes: [(HKWorkoutActivityType, String, String)] = [
         (.running, "Running", "figure.run"),
@@ -98,7 +98,7 @@ struct WorkoutFilterView: View {
                     // Apply filters button
                     Button(action: {
                         Task {
-                            await refreshWorkouts()
+                            await applyFilters()
                         }
                     }) {
                         HStack {
