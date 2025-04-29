@@ -2,11 +2,22 @@ import Foundation
 import CoreLocation
 import HealthKit
 
+// Represents a track segment with location points
+struct GPXTrackSegment {
+    let locations: [CLLocation]
+}
+
 struct GPXTrack {
-    let name: String
+    var name: String
     let type: String
     let date: Date
-    let locations: [CLLocation]
+    // Updated to support multiple track segments
+    let segments: [GPXTrackSegment]
+    
+    // Convenience computed property to get all locations across all segments
+    var allLocations: [CLLocation] {
+        return segments.flatMap { $0.locations }
+    }
     
     var workoutType: HKWorkoutActivityType {
         // Check filename first for simulator samples
@@ -40,7 +51,8 @@ struct GPXTrack {
     var workout: HKWorkout {
         // Create a workout representation for the GPX track
         // Use sorted locations to ensure start and end dates are correct
-        let sortedLocations = locations.sorted { $0.timestamp < $1.timestamp }
+        let allLocations = self.allLocations
+        let sortedLocations = allLocations.sorted { $0.timestamp < $1.timestamp }
         
         // Make sure we have valid dates (start date must be before end date)
         var startDate = sortedLocations.first?.timestamp ?? date
@@ -114,7 +126,16 @@ class GPXParser {
             return nil
         }
         
-        return parseGPXData(xmlData)
+        var track = parseGPXData(xmlData)
+        
+        // If track has no name or empty name, use the filename without extension
+        if track?.name.isEmpty ?? true {
+            let filename = url.deletingPathExtension().lastPathComponent
+            track?.name = filename
+            print("Using filename as track name: \(filename)")
+        }
+        
+        return track
     }
     
     static func parseGPXData(_ data: Data) -> GPXTrack? {
@@ -123,6 +144,12 @@ class GPXParser {
         parser.delegate = delegate
         
         if parser.parse() {
+            // If there's no name in the GPX file, use the filename without extension
+            if delegate.track?.name.isEmpty ?? true {
+                // We can't set the name here since we don't have the filename
+                // The calling code will need to handle this
+                print("No name found in GPX data")
+            }
             return delegate.track
         } else {
             print("Failed to parse GPX data")
@@ -136,25 +163,32 @@ class GPXParserDelegate: NSObject, XMLParserDelegate {
     private var trackName = ""
     private var trackType = ""
     private var trackDate = Date()
-    private var trackPoints: [CLLocation] = []
     
+    // Track the current track, segment, and point
+    private var isTrack = false
+    private var isTrackSegment = false
+    private var isTrackPoint = false
+    
+    // Data for the current point
     private var currentLat: Double?
     private var currentLon: Double?
     private var currentEle: Double?
     private var currentTime: Date?
     
-    private var isTrackSegment = false
-    private var isTrackPoint = false
+    // Store segments for the current track
+    private var currentSegmentPoints: [CLLocation] = []
+    private var segments: [GPXTrackSegment] = []
     
     var track: GPXTrack? {
-        if trackPoints.isEmpty {
+        // Only return a track if we have at least one segment with points
+        if segments.isEmpty || segments.allSatisfy({ $0.locations.isEmpty }) {
             return nil
         }
         return GPXTrack(
             name: trackName,
             type: trackType,
             date: trackDate,
-            locations: trackPoints
+            segments: segments
         )
     }
     
@@ -162,22 +196,29 @@ class GPXParserDelegate: NSObject, XMLParserDelegate {
         currentElement = elementName
         
         switch elementName {
+        case "trk":
+            isTrack = true
+            // Reset segments when starting a new track
+            segments = []
+            
         case "trkseg":
             isTrackSegment = true
+            // Reset current segment points
+            currentSegmentPoints = []
+            
         case "trkpt":
             isTrackPoint = true
             currentLat = Double(attributeDict["lat"] ?? "0")
             currentLon = Double(attributeDict["lon"] ?? "0")
             currentEle = nil
             currentTime = nil
+            
         default:
             break
         }
     }
     
     func parser(_ parser: XMLParser, foundCharacters string: String) {
-        guard isTrackSegment else { return }
-        
         let trimmedString = string.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedString.isEmpty else { return }
         
@@ -194,7 +235,10 @@ class GPXParserDelegate: NSObject, XMLParserDelegate {
         } else {
             switch currentElement {
             case "name":
-                trackName = trimmedString
+                // Only set track name if we're in a track element
+                if isTrack {
+                    trackName = trimmedString
+                }
             case "type":
                 trackType = trimmedString
             case "time":
@@ -218,11 +262,16 @@ class GPXParserDelegate: NSObject, XMLParserDelegate {
                     verticalAccuracy: 10,
                     timestamp: currentTime ?? Date()
                 )
-                trackPoints.append(location)
+                currentSegmentPoints.append(location)
             }
             isTrackPoint = false
         } else if elementName == "trkseg" {
+            // End of segment - add it to the list of segments
+            let segment = GPXTrackSegment(locations: currentSegmentPoints)
+            segments.append(segment)
             isTrackSegment = false
+        } else if elementName == "trk" {
+            isTrack = false
         }
         
         currentElement = ""

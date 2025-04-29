@@ -9,8 +9,8 @@ class HealthStore: ObservableObject {
     
     // Store sample tracks for simulator use
     private var sampleTracks: [GPXTrack] = []
-    // Store locations for sample workouts
-    private var sampleLocations: [UUID: [CLLocation]] = [:]
+    // Store track data for sample workouts
+    private var sampleTrackData: [UUID: GPXTrack] = [:]
     
     private let isRunningInSimulator: Bool = {
         #if targetEnvironment(simulator)
@@ -41,11 +41,11 @@ class HealthStore: ObservableObject {
         // In simulator mode, directly populate the workouts array
         var simulatedWorkouts: [HKWorkout] = []
         
-        // Store locations for each track
+        // Store track data for each track
         for track in sampleTracks {
             let uuid = UUID()
-            // Store locations with a generated UUID as key
-            sampleLocations[uuid] = track.locations
+            // Store track with a generated UUID as key
+            sampleTrackData[uuid] = track
             
             // Create a simulated workout
             let workout = HKWorkout(
@@ -263,16 +263,16 @@ class HealthStore: ObservableObject {
         }
     }
     
-    func fetchRouteData(for workout: HKWorkout, completion: @escaping ([CLLocation]?, Error?) -> Void) {
+    func fetchRouteData(for workout: HKWorkout, completion: @escaping ([GPXTrackSegment]?, Error?) -> Void) {
         // If running in simulator, use sample data
         if isRunningInSimulator {
             // Try to find GPX track that matches this workout by UUID in metadata
             if let metadata = workout.metadata, 
                let trackUUIDString = metadata["trackUUID"] as? String,
                let trackUUID = UUID(uuidString: trackUUIDString),
-               let locations = sampleLocations[trackUUID] {
-                print("Found matching locations by UUID for simulator workout")
-                completion(locations, nil)
+               let track = sampleTrackData[trackUUID] {
+                print("Found matching track by UUID for simulator workout")
+                completion(track.segments, nil)
                 return
             }
             
@@ -281,7 +281,7 @@ class HealthStore: ObservableObject {
             for track in sampleTracks {
                 if track.workoutType == workout.workoutActivityType {
                     print("Found matching track by activity type for simulator workout")
-                    completion(track.locations, nil)
+                    completion(track.segments, nil)
                     return
                 }
             }
@@ -289,7 +289,7 @@ class HealthStore: ObservableObject {
             // Last resort: just use the first available track
             if let firstTrack = sampleTracks.first {
                 print("Using first available track as fallback for simulator workout")
-                completion(firstTrack.locations, nil)
+                completion(firstTrack.segments, nil)
                 return
             }
             
@@ -315,29 +315,54 @@ class HealthStore: ObservableObject {
                 return
             }
             
-            guard let routeSamples = samples as? [HKWorkoutRoute], let route = routeSamples.first else {
+            // Treat each route as a segment
+            guard let routeSamples = samples as? [HKWorkoutRoute] else {
                 completion([], nil)
                 return
             }
             
-            var allLocations: [CLLocation] = []
-            
-            let routeDataQuery = HKWorkoutRouteQuery(route: route) { (query, locations, done, error) in
-                if let error = error {
-                    completion(nil, error)
-                    return
-                }
-                
-                if let locations = locations {
-                    allLocations.append(contentsOf: locations)
-                }
-                
-                if done {
-                    completion(allLocations, nil)
-                }
+            // Early return if no routes
+            if routeSamples.isEmpty {
+                completion([], nil)
+                return
             }
             
-            self.healthStore.execute(routeDataQuery)
+            // Set up for multiple route processing
+            var segments: [GPXTrackSegment] = []
+            var pendingRoutes = routeSamples.count
+            
+            // Process each route separately
+            for route in routeSamples {
+                var segmentLocations: [CLLocation] = []
+                
+                let routeDataQuery = HKWorkoutRouteQuery(route: route) { (query, locations, done, error) in
+                    if let error = error {
+                        pendingRoutes = 0  // Cancel everything on error
+                        completion(nil, error)
+                        return
+                    }
+                    
+                    if let locations = locations {
+                        segmentLocations.append(contentsOf: locations)
+                    }
+                    
+                    if done {
+                        // Create a segment from this route's locations
+                        let segment = GPXTrackSegment(locations: segmentLocations)
+                        segments.append(segment)
+                        
+                        // Decrement pending routes counter
+                        pendingRoutes -= 1
+                        
+                        // If all routes have been processed, return the segments
+                        if pendingRoutes == 0 {
+                            completion(segments, nil)
+                        }
+                    }
+                }
+                
+                self.healthStore.execute(routeDataQuery)
+            }
         }
         
         self.healthStore.execute(routeQuery)

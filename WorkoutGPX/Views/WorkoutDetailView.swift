@@ -10,7 +10,7 @@ struct WorkoutDetailView: View {
     @EnvironmentObject var settings: SettingsModel
     
     @State private var isLoading = false
-    @State private var routeData: [CLLocation] = []
+    @State private var trackSegments: [GPXTrackSegment] = []
     @State private var exportError: String?
     @State private var gpxURL: URL?
     
@@ -36,7 +36,7 @@ struct WorkoutDetailView: View {
                     .foregroundColor(.white)
                     .cornerRadius(10)
                 }
-            } else if routeData.isEmpty {
+            } else if trackSegments.isEmpty {
                 VStack(spacing: 20) {
                     Image(systemName: "mappin.slash")
                         .font(.system(size: 50))
@@ -52,15 +52,19 @@ struct WorkoutDetailView: View {
                         .padding()
                 }
             } else {
-                // Full screen map
-                MapView(routeLocations: routeData)
+                // Full screen map with multiple segments
+                MapView(trackSegments: trackSegments)
                     .environmentObject(settings)
                     .ignoresSafeArea(edges: .bottom)
                 
                 VStack {
                     // Floating workout info section with transparency
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Route with \(routeData.count) data points")
+                        // Calculate total points across all segments
+                        let totalPoints = trackSegments.reduce(0) { $0 + $1.locations.count }
+                        let segmentCount = trackSegments.count
+                        
+                        Text("Route with \(totalPoints) data points in \(segmentCount) segment\(segmentCount == 1 ? "" : "s")")
                             .font(.headline)
                         
                         HStack {
@@ -81,10 +85,13 @@ struct WorkoutDetailView: View {
                         }
                         
                         // Add elevation data
-                        if !routeData.isEmpty {
+                        if !trackSegments.isEmpty {
                             Divider()
                             
-                            let elevations = routeData.map { $0.altitude }
+                            // Combine all locations to calculate overall elevation stats
+                            let allLocations = trackSegments.flatMap { $0.locations }
+                            let elevations = allLocations.map { $0.altitude }
+                            
                             if let minElevation = elevations.min(), 
                                let maxElevation = elevations.max() {
                                 HStack {
@@ -160,13 +167,13 @@ struct WorkoutDetailView: View {
         .navigationBarItems(trailing:
             Button(action: {
                 // Always export fresh GPX file before sharing
-                if let url = exportGPX(for: workout, routeData: routeData) {
+                if let url = exportGPX(for: workout, trackSegments: trackSegments) {
                     shareFile(url: url)
                 }
             }) {
                 Image(systemName: "square.and.arrow.up")
             }
-            .disabled(routeData.isEmpty || isLoading)
+            .disabled(trackSegments.isEmpty || isLoading)
         )
         .onAppear {
             loadRouteData()
@@ -176,9 +183,9 @@ struct WorkoutDetailView: View {
     private func loadRouteData() {
         isLoading = true
         exportError = nil
-        routeData = []
+        trackSegments = []
         
-        healthStore.fetchRouteData(for: workout) { locations, error in
+        healthStore.fetchRouteData(for: workout) { segments, error in
             DispatchQueue.main.async {
                 isLoading = false
                 
@@ -187,9 +194,9 @@ struct WorkoutDetailView: View {
                     return
                 }
                 
-                routeData = locations ?? []
+                trackSegments = segments ?? []
                 
-                if routeData.isEmpty {
+                if trackSegments.isEmpty {
                     exportError = "No route data found for this workout"
                     return
                 }

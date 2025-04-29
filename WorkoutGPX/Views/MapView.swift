@@ -403,8 +403,18 @@ class GradientPolylineRenderer: MKPolylineRenderer {
 
 // UIViewRepresentable for MapKit
 struct MapView: UIViewRepresentable {
-    let routeLocations: [CLLocation]
+    let trackSegments: [GPXTrackSegment]
     @EnvironmentObject var settings: SettingsModel
+    
+    // Convenience init to maintain backward compatibility
+    init(routeLocations: [CLLocation]) {
+        self.trackSegments = [GPXTrackSegment(locations: routeLocations)]
+    }
+    
+    // New initializer for multiple segments
+    init(trackSegments: [GPXTrackSegment]) {
+        self.trackSegments = trackSegments
+    }
     
     func makeUIView(context: Context) -> MKMapView {
         let mapView = MKMapView()
@@ -421,16 +431,33 @@ struct MapView: UIViewRepresentable {
         mapView.mapType = settings.mapStyle.mapType
         #endif
         
-        // Add polyline and annotations
-        if !routeLocations.isEmpty {
-            // Create the enhanced elevation polyline
-            let elevationPolyline = createElevationPolyline(from: routeLocations)
+        // Skip if no segments
+        if trackSegments.isEmpty {
+            return mapView
+        }
+        
+        // Collect all locations for region setting
+        var allLocations: [CLLocation] = []
+        
+        // Store all polylines for the coordinator
+        var elevationPolylines: [ElevationPolyline] = []
+        
+        // Process each segment separately
+        for (index, segment) in trackSegments.enumerated() {
+            let locations = segment.locations
+            guard !locations.isEmpty else { continue }
+            
+            // Add locations for region calculation later
+            allLocations.append(contentsOf: locations)
+            
+            // Create the enhanced elevation polyline for this segment
+            let elevationPolyline = createElevationPolyline(from: locations)
             
             // Calculate grade data (this will smooth and process elevation data)
-            elevationPolyline.calculateGradeData(from: routeLocations)
+            elevationPolyline.calculateGradeData(from: locations)
             
             // Debug elevation data
-            print("=== ELEVATION DATA SUMMARY ===")
+            print("=== SEGMENT \(index+1) ELEVATION DATA SUMMARY ===")
             print("Total points: \(elevationPolyline.elevations.count)")
             print("Min elevation: \(elevationPolyline.minElevation)m")
             print("Max elevation: \(elevationPolyline.maxElevation)m")
@@ -452,18 +479,27 @@ struct MapView: UIViewRepresentable {
             // Add to map
             mapView.addOverlay(elevationPolyline)
             
-            // Store elevation data in coordinator for renderer to use
-            context.coordinator.elevationPolyline = elevationPolyline
-            
+            // Store the polyline for the coordinator
+            elevationPolylines.append(elevationPolyline)
+        }
+        
+        // Store elevation polylines in coordinator for renderer to use
+        context.coordinator.elevationPolylines = elevationPolylines
+        
+        // Set the visible region to show all tracks
+        if !allLocations.isEmpty {
             // Add significant elevation markers (Garmin-like)
-            addElevationMarkers(to: mapView, routeLocations: routeLocations)
+            addElevationMarkers(to: mapView, routeLocations: allLocations)
             
-            // Set the visible region to show the route
-            setRegion(for: mapView)
+            // Set the region to show all segments
+            setRegion(for: mapView, from: allLocations)
             
-            // Add start and end annotations
-            if let firstLocation = routeLocations.first,
-               let lastLocation = routeLocations.last {
+            // Add start and end annotations using the first and last segments
+            if let firstSegment = trackSegments.first, 
+               let lastSegment = trackSegments.last,
+               let firstLocation = firstSegment.locations.first,
+               let lastLocation = lastSegment.locations.last {
+                
                 let startPoint = MKPointAnnotation()
                 startPoint.coordinate = firstLocation.coordinate
                 startPoint.title = "Start"
@@ -579,16 +615,16 @@ struct MapView: UIViewRepresentable {
         }
     }
     
-    private func setRegion(for mapView: MKMapView) {
-        guard !routeLocations.isEmpty else { return }
+    private func setRegion(for mapView: MKMapView, from locations: [CLLocation]) {
+        guard !locations.isEmpty else { return }
         
         // Find min/max coordinates
-        var minLat = routeLocations[0].coordinate.latitude
+        var minLat = locations[0].coordinate.latitude
         var maxLat = minLat
-        var minLon = routeLocations[0].coordinate.longitude
+        var minLon = locations[0].coordinate.longitude
         var maxLon = minLon
         
-        for location in routeLocations {
+        for location in locations {
             minLat = min(minLat, location.coordinate.latitude)
             maxLat = max(maxLat, location.coordinate.latitude)
             minLon = min(minLon, location.coordinate.longitude)
@@ -623,7 +659,21 @@ struct MapView: UIViewRepresentable {
     }
     
     class Coordinator: NSObject, MKMapViewDelegate {
-        var elevationPolyline: ElevationPolyline?
+        var elevationPolylines: [ElevationPolyline] = []
+        
+        // Keep the single polyline property for backward compatibility
+        var elevationPolyline: ElevationPolyline? {
+            get {
+                return elevationPolylines.first
+            }
+            set {
+                if let newValue = newValue {
+                    elevationPolylines = [newValue]
+                } else {
+                    elevationPolylines = []
+                }
+            }
+        }
         
         func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
             if let polyline = overlay as? ElevationPolyline {
