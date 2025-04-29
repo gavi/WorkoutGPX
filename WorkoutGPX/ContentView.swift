@@ -86,7 +86,7 @@ struct ContentView: View {
                             startDate: $startDate,
                             endDate: $endDate,
                             showFilters: $showFilters,
-                            refreshWorkouts: refreshWorkouts
+                            applyFilters: applyFilters
                         )
                         .padding(.horizontal)
                         
@@ -150,28 +150,8 @@ struct ContentView: View {
                     .disabled(isLoading || !healthStore.authorized)
                 }
             }
-            .onAppear {
-                Task {
-                    // Initialize with a clean state
-                    isLoading = true
-                    
-                    // Request authorization and check access
-                    await healthStore.requestAuthorization()
-                    
-                    // Only fetch workouts if authorized
-                    if healthStore.authorized {
-                        await healthStore.fetchWorkouts(
-                            startDate: startDate,
-                            endDate: endDate,
-                            workoutTypes: selectedWorkoutTypes
-                        )
-                    }
-                    
-                    // Finish loading
-                    isLoading = false
-                }
-            }
-        }.onChange(of: scenePhase) { newPhase in
+        }
+        .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
                 Task {
                     // Re-check authorization every time the app becomes active
@@ -196,9 +176,24 @@ struct ContentView: View {
     @MainActor
     private func refreshWorkouts() async {
         isLoading = true
+        // First verify authorization status
+        await healthStore.requestAuthorization()
         
-        // Update endDate to current time when refreshing
-        endDate = Date()
+        // Only fetch if authorized
+        if healthStore.authorized {
+            await healthStore.fetchWorkouts(
+                startDate: startDate,
+                endDate: endDate,
+                workoutTypes: selectedWorkoutTypes
+            )
+        }
+        
+        isLoading = false
+    }
+    
+    @MainActor
+    private func applyFilters() async {
+        isLoading = true
         
         // First verify authorization status
         await healthStore.requestAuthorization()
