@@ -12,11 +12,16 @@ struct ContentView: View {
     @Environment(\.scenePhase) private var scenePhase
 
     var filteredWorkouts: [HKWorkout] {
-        healthStore.workouts.filter { workout in
-            let matchesType = selectedWorkoutTypes.contains(workout.workoutActivityType)
-            let isInDateRange = (workout.startDate >= startDate && workout.startDate <= endDate)
-            return matchesType && isInDateRange
-        }
+        // Skip filters in simulator for testing purposes
+        #if targetEnvironment(simulator)
+            return healthStore.workouts
+        #else
+            return healthStore.workouts.filter { workout in
+                let matchesType = selectedWorkoutTypes.contains(workout.workoutActivityType)
+                let isInDateRange = (workout.startDate >= startDate && workout.startDate <= endDate)
+                return matchesType && isInDateRange
+            }
+        #endif
     }
     
     var body: some View {
