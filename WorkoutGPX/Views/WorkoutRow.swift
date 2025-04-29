@@ -15,7 +15,7 @@ struct WorkoutRow: View {
                     .frame(width: 40, height: 40)
                 
                 VStack(alignment: .leading) {
-                    Text(workoutActivityTypeString(workout.workoutActivityType))
+                    Text(workout.metadata?["name"] as? String ?? workoutActivityTypeString(workout.workoutActivityType))
                         .font(.headline)
                     Text(dateFormatter.string(from: workout.startDate))
                         .font(.subheadline)

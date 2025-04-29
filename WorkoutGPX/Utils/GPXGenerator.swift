@@ -3,7 +3,7 @@ import HealthKit
 import CoreLocation
 import SwiftUI
 
-func generateGPX(for workout: HKWorkout, routeData: [CLLocation]) -> String {
+func generateGPX(for workout: HKWorkout, trackSegments: [GPXTrackSegment]) -> String {
     var gpx = """
     <?xml version="1.0" encoding="UTF-8"?>
     <gpx version="1.1" 
@@ -13,25 +13,34 @@ func generateGPX(for workout: HKWorkout, routeData: [CLLocation]) -> String {
         xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
         <metadata>
             <time>\(ISO8601DateFormatter().string(from: workout.startDate))</time>
-            <n>\(workoutActivityTypeString(workout.workoutActivityType))</n>
+            <name>\(workoutActivityTypeString(workout.workoutActivityType))</name>
         </metadata>
         <trk>
-            <n>\(workoutActivityTypeString(workout.workoutActivityType)) \(workout.startDate)</n>
-            <trkseg>
+            <name>\(workoutActivityTypeString(workout.workoutActivityType)) \(workout.startDate)</name>
     """
     
-    for location in routeData {
-        let timeString = ISO8601DateFormatter().string(from: location.timestamp)
+    // Add each segment separately
+    for (index, segment) in trackSegments.enumerated() {
         gpx += """
-                <trkpt lat="\(location.coordinate.latitude)" lon="\(location.coordinate.longitude)">
-                    <ele>\(location.altitude)</ele>
-                    <time>\(timeString)</time>
-                </trkpt>
+            <trkseg>
+        """
+        
+        for location in segment.locations {
+            let timeString = ISO8601DateFormatter().string(from: location.timestamp)
+            gpx += """
+                    <trkpt lat="\(location.coordinate.latitude)" lon="\(location.coordinate.longitude)">
+                        <ele>\(location.altitude)</ele>
+                        <time>\(timeString)</time>
+                    </trkpt>
+            """
+        }
+        
+        gpx += """
+            </trkseg>
         """
     }
     
     gpx += """
-            </trkseg>
         </trk>
     </gpx>
     """
@@ -39,8 +48,13 @@ func generateGPX(for workout: HKWorkout, routeData: [CLLocation]) -> String {
     return gpx
 }
 
-func exportGPX(for workout: HKWorkout, routeData: [CLLocation]) -> URL? {
-    let gpxString = generateGPX(for: workout, routeData: routeData)
+// For backward compatibility - creates a single segment from locations
+func generateGPX(for workout: HKWorkout, routeData: [CLLocation]) -> String {
+    return generateGPX(for: workout, trackSegments: [GPXTrackSegment(locations: routeData)])
+}
+
+func exportGPX(for workout: HKWorkout, trackSegments: [GPXTrackSegment]) -> URL? {
+    let gpxString = generateGPX(for: workout, trackSegments: trackSegments)
     
     do {
         let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
@@ -53,7 +67,8 @@ func exportGPX(for workout: HKWorkout, routeData: [CLLocation]) -> URL? {
         let unitSystem = useMetric ? "km" : "mi"
         
         let activityType = workoutActivityTypeString(workout.workoutActivityType)
-        let filename = "\(activityType)_\(dateString)_\(unitSystem).gpx"
+        let segmentCount = trackSegments.count > 1 ? "_\(trackSegments.count)segments" : ""
+        let filename = "\(activityType)_\(dateString)_\(unitSystem)\(segmentCount).gpx"
         let fileURL = documentsDirectory.appendingPathComponent(filename)
         
         try gpxString.write(to: fileURL, atomically: true, encoding: .utf8)
@@ -63,5 +78,10 @@ func exportGPX(for workout: HKWorkout, routeData: [CLLocation]) -> URL? {
         print("Failed to save GPX file: \(error.localizedDescription)")
         return nil
     }
+}
+
+// For backward compatibility
+func exportGPX(for workout: HKWorkout, routeData: [CLLocation]) -> URL? {
+    return exportGPX(for: workout, trackSegments: [GPXTrackSegment(locations: routeData)])
 }
 
