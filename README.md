@@ -9,6 +9,16 @@ WorkoutGPX is a Swift application that allows you to export your Apple Health wo
 - Preview workout routes before exporting
 - Simple and intuitive user interface
 
+## Screenshots
+
+![Screeenshot 1](https://static.objectgraph.com/img/wgpx/workoutgpx_1.webp)
+![Screeenshot 2](https://static.objectgraph.com/img/wgpx/workoutgpx_2.webp)
+![Screeenshot 3](https://static.objectgraph.com/img/wgpx/workoutgpx_3.webp)
+![Screeenshot 4](https://static.objectgraph.com/img/wgpx/workoutgpx_4.webp)
+![Screeenshot 5](https://static.objectgraph.com/img/wgpx/workoutgpx_5.webp)
+
+
+
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
