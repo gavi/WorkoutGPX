@@ -5,19 +5,37 @@ import HealthKit
 struct ContentView: View {
     @StateObject private var healthStore = HealthStore()
     @State private var showFilters = false
-    @State private var selectedWorkoutTypes: Set<HKWorkoutActivityType> = [.running, .walking, .hiking, .cycling]
+    
+    // Define an "All Workouts" type with a custom raw value
+    private let allWorkoutsType: HKWorkoutActivityType = {
+        return HKWorkoutActivityType(rawValue: 999)!
+    }()
+    
+    // Initialize with "All Workouts" selected
+    @State private var selectedWorkoutTypes: Set<HKWorkoutActivityType> = []
+    
     @State private var startDate = Calendar.current.date(byAdding: .month, value: -1, to: Date()) ?? Date()
     @State private var endDate = Date()
     @State private var isLoading = true
     @Environment(\.scenePhase) private var scenePhase
+    
+    // Initialize the selected workout types when the view is created
+    init() {
+        // This is needed because we can't directly use allWorkoutsType in the @State initialization
+        let allType = HKWorkoutActivityType(rawValue: 999)!
+        _selectedWorkoutTypes = State(initialValue: [allType])
+    }
 
     var filteredWorkouts: [HKWorkout] {
         // Skip filters in simulator for testing purposes
         #if targetEnvironment(simulator)
             return healthStore.workouts
         #else
+            // Check if "All Workouts" is selected
+            let isAllWorkoutsSelected = selectedWorkoutTypes.contains(allWorkoutsType)
+            
             return healthStore.workouts.filter { workout in
-                let matchesType = selectedWorkoutTypes.contains(workout.workoutActivityType)
+                let matchesType = isAllWorkoutsSelected || selectedWorkoutTypes.contains(workout.workoutActivityType)
                 let isInDateRange = (workout.startDate >= startDate && workout.startDate <= endDate)
                 return matchesType && isInDateRange
             }
@@ -181,10 +199,17 @@ struct ContentView: View {
         
         // Only fetch if authorized
         if healthStore.authorized {
+            // Check if "All Workouts" is selected
+            let isAllWorkoutsSelected = selectedWorkoutTypes.contains(allWorkoutsType)
+            
+            // If "All Workouts" is selected, use all the relevant workout types from HealthStore
+            let typesToFetch = isAllWorkoutsSelected ? 
+                Set(healthStore.relevantWorkoutTypes) : selectedWorkoutTypes
+            
             await healthStore.fetchWorkouts(
                 startDate: startDate,
                 endDate: endDate,
-                workoutTypes: selectedWorkoutTypes
+                workoutTypes: typesToFetch
             )
         }
         
@@ -200,10 +225,17 @@ struct ContentView: View {
         
         // Only fetch if authorized
         if healthStore.authorized {
+            // Check if "All Workouts" is selected
+            let isAllWorkoutsSelected = selectedWorkoutTypes.contains(allWorkoutsType)
+            
+            // If "All Workouts" is selected, use all the relevant workout types from HealthStore
+            let typesToFetch = isAllWorkoutsSelected ? 
+                Set(healthStore.relevantWorkoutTypes) : selectedWorkoutTypes
+            
             await healthStore.fetchWorkouts(
                 startDate: startDate,
                 endDate: endDate,
-                workoutTypes: selectedWorkoutTypes
+                workoutTypes: typesToFetch
             )
         }
         

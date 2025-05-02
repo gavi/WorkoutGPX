@@ -9,6 +9,13 @@ struct WorkoutFilterView: View {
     @Binding var showFilters: Bool
     var applyFilters: () async -> Void
     
+    // Define a constant for "All Workouts" type with a custom raw value
+    private let allWorkoutsType: HKWorkoutActivityType = {
+        // Using a high, unlikely-to-be-used value for "All Workouts"
+        return HKWorkoutActivityType(rawValue: 999)!
+    }()
+    
+    // Workout types available in the filter
     private let workoutTypes: [(HKWorkoutActivityType, String, String)] = [
         (.running, "Running", "figure.run"),
         (.walking, "Walking", "figure.walk"),
@@ -29,6 +36,27 @@ struct WorkoutFilterView: View {
                     
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 10) {
+                            // "All Workouts" button
+                            Button(action: {
+                                toggleWorkoutType(allWorkoutsType)
+                            }) {
+                                VStack {
+                                    Image(systemName: "star.circle")
+                                        .font(.system(size: 20))
+                                    Text("All")
+                                        .font(.caption)
+                                }
+                                .frame(width: 70, height: 60)
+                                .background(selectedWorkoutTypes.contains(allWorkoutsType) ? Color.blue.opacity(0.2) : Color.gray.opacity(0.1))
+                                .foregroundColor(selectedWorkoutTypes.contains(allWorkoutsType) ? .blue : .primary)
+                                .cornerRadius(8)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(selectedWorkoutTypes.contains(allWorkoutsType) ? Color.blue : Color.clear, lineWidth: 2)
+                                )
+                            }
+                            
+                            // Regular workout type buttons
                             ForEach(workoutTypes, id: \.0) { type, name, icon in
                                 Button(action: {
                                     toggleWorkoutType(type)
@@ -118,13 +146,32 @@ struct WorkoutFilterView: View {
     }
     
     private func toggleWorkoutType(_ type: HKWorkoutActivityType) {
-        if selectedWorkoutTypes.contains(type) {
-            // Don't allow deselecting all types
-            if selectedWorkoutTypes.count > 1 {
-                selectedWorkoutTypes.remove(type)
+        // Special handling for "All Workouts"
+        if type.rawValue == allWorkoutsType.rawValue {
+            if selectedWorkoutTypes.contains(allWorkoutsType) {
+                // Don't allow deselecting if it's the only selected type
+                if selectedWorkoutTypes.count > 1 {
+                    selectedWorkoutTypes.remove(allWorkoutsType)
+                }
+            } else {
+                // Select only "All Workouts" and remove all others
+                selectedWorkoutTypes = [allWorkoutsType]
             }
         } else {
-            selectedWorkoutTypes.insert(type)
+            // Regular workout type handling
+            if selectedWorkoutTypes.contains(type) {
+                // Don't allow deselecting if it's the only selected type
+                if selectedWorkoutTypes.count > 1 {
+                    selectedWorkoutTypes.remove(type)
+                }
+            } else {
+                selectedWorkoutTypes.insert(type)
+                
+                // Remove "All Workouts" option if it was selected
+                if selectedWorkoutTypes.contains(allWorkoutsType) {
+                    selectedWorkoutTypes.remove(allWorkoutsType)
+                }
+            }
         }
     }
     

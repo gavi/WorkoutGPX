@@ -20,7 +20,8 @@ class HealthStore: ObservableObject {
         #endif
     }()
     
-    private let relevantWorkoutTypes: [HKWorkoutActivityType] = [
+    // Workout types that are relevant for GPX export
+    let relevantWorkoutTypes: [HKWorkoutActivityType] = [
         .running,
         .walking,
         .hiking,
