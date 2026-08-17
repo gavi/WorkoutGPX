@@ -3,16 +3,16 @@ import CoreLocation
 import HealthKit
 
 // Represents a track segment with location points
-struct GPXTrackSegment {
+struct RouteSegment {
     let locations: [CLLocation]
 }
 
-struct GPXTrack {
+struct RouteTrack {
     var name: String
     let type: String
     let date: Date
     // Updated to support multiple track segments
-    let segments: [GPXTrackSegment]
+    let segments: [RouteSegment]
     
     // Convenience computed property to get all locations across all segments
     var allLocations: [CLLocation] {
@@ -82,8 +82,8 @@ struct GPXTrack {
 
 class GPXParser {
     
-    static func loadSampleTracks() -> [GPXTrack] {
-        var tracks: [GPXTrack] = []
+    static func loadSampleTracks() -> [RouteTrack] {
+        var tracks: [RouteTrack] = []
         
         // Look for GPX files in the Samples directory
         let samplesDirPath = Bundle.main.bundlePath + "/Samples"
@@ -120,7 +120,7 @@ class GPXParser {
         print("Loaded \(tracks.count) sample tracks from assets")
         return tracks
     }    
-    static func parseGPXFile(at url: URL) -> GPXTrack? {
+    static func parseGPXFile(at url: URL) -> RouteTrack? {
         guard let xmlData = try? Data(contentsOf: url) else {
             print("Failed to read GPX file at \(url)")
             return nil
@@ -138,7 +138,7 @@ class GPXParser {
         return track
     }
     
-    static func parseGPXData(_ data: Data) -> GPXTrack? {
+    static func parseGPXData(_ data: Data) -> RouteTrack? {
         let parser = XMLParser(data: data)
         let delegate = GPXParserDelegate()
         parser.delegate = delegate
@@ -177,14 +177,14 @@ class GPXParserDelegate: NSObject, XMLParserDelegate {
     
     // Store segments for the current track
     private var currentSegmentPoints: [CLLocation] = []
-    private var segments: [GPXTrackSegment] = []
+    private var segments: [RouteSegment] = []
     
-    var track: GPXTrack? {
+    var track: RouteTrack? {
         // Only return a track if we have at least one segment with points
         if segments.isEmpty || segments.allSatisfy({ $0.locations.isEmpty }) {
             return nil
         }
-        return GPXTrack(
+        return RouteTrack(
             name: trackName,
             type: trackType,
             date: trackDate,
@@ -267,7 +267,7 @@ class GPXParserDelegate: NSObject, XMLParserDelegate {
             isTrackPoint = false
         } else if elementName == "trkseg" {
             // End of segment - add it to the list of segments
-            let segment = GPXTrackSegment(locations: currentSegmentPoints)
+            let segment = RouteSegment(locations: currentSegmentPoints)
             segments.append(segment)
             isTrackSegment = false
         } else if elementName == "trk" {

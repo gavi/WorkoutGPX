@@ -4,6 +4,8 @@ import HealthKit
 // Row showing workout information
 struct WorkoutRow: View {
     let workout: HKWorkout
+    // Whether the workout has GPS route data to export
+    var hasRoute: Bool = true
     @EnvironmentObject var settings: SettingsModel
     
     var body: some View {
@@ -23,6 +25,12 @@ struct WorkoutRow: View {
                 }
                 
                 Spacer()
+                
+                if !hasRoute {
+                    Image(systemName: "location.slash")
+                        .foregroundColor(.secondary)
+                        .accessibilityLabel("No GPS data")
+                }
                 
                 VStack(alignment: .trailing) {
                     Text(durationFormatter.string(from: workout.duration) ?? "")

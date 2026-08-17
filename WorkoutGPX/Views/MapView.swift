@@ -1,6 +1,11 @@
 import SwiftUI
 import MapKit
 import CoreLocation
+import UIKit
+
+// Map rendering for a workout route: gradient-coloured polylines (effort or pure
+// elevation), start/end/peak/valley markers, and a hover marker driven by the
+// elevation chart. Shared lineage with GPXExplore's MapView+Common / MapView+iOS.
 
 // Enhanced polyline object to store elevation data and gradients
 class ElevationPolyline: MKPolyline {
@@ -55,16 +60,15 @@ class ElevationPolyline: MKPolyline {
                     grade = (elevation2 - elevation1) / horizontalDistance
                     
                     // Apply realistic limits to grades (real-world trails rarely exceed 35%)
-                    let originalGrade = grade
                     grade = min(max(grade, -0.45), 0.45)
                     
                     // Debug every 20th point to avoid console flood
                     if i % 20 == 0 {
-                        print("Point \(i): window \(startIdx)-\(endIdx), elev diff: \(elevation2-elevation1)m, " +
-                              "horiz dist: \(horizontalDistance)m, grade: \(originalGrade) → \(grade)")
+                        //print("Point \(i): window \(startIdx)-\(endIdx), elev diff: \(elevation2-elevation1)m, " +
+                              //"horiz dist: \(horizontalDistance)m, grade: \(originalGrade) → \(grade)")
                     }
                 } else if i % 20 == 0 {
-                    print("Point \(i): window \(startIdx)-\(endIdx), horizontal distance too small (\(horizontalDistance)m)")
+                    //print("Point \(i): window \(startIdx)-\(endIdx), horizontal distance too small (\(horizontalDistance)m)")
                 }
                 
                 // Preserve small grade changes rather than zeroing them out
@@ -158,7 +162,7 @@ class ElevationPolyline: MKPolyline {
     }
 }
 
-// Custom renderer for gradient polylines
+// Original effort-based gradient polyline renderer
 class GradientPolylineRenderer: MKPolylineRenderer {
     var elevationPolyline: ElevationPolyline?
     var callCounter: Int = 0
@@ -186,13 +190,12 @@ class GradientPolylineRenderer: MKPolylineRenderer {
         }
         
         // Calculate line width with zoom adjustments
-        let zoomAdjustedLineWidth = lineWidth / sqrt(zoomScale)
-        let zoomBoostFactor = max(1.0, 0.2 / (zoomScale + 0.02))
-        let actualLineWidth = min(zoomAdjustedLineWidth * zoomBoostFactor, lineWidth * 25)
-        
+        let baseLineWidth = self.lineWidth // Use the lineWidth property set from outside
+        let adjustedLineWidth = baseLineWidth / zoomScale
+
         // Set up the context for drawing
         ctx.saveGState()
-        ctx.setLineWidth(actualLineWidth)
+        ctx.setLineWidth(adjustedLineWidth)
         ctx.setLineCap(.round)
         ctx.setLineJoin(.round)
         ctx.setShouldAntialias(true)
@@ -236,59 +239,34 @@ class GradientPolylineRenderer: MKPolylineRenderer {
                 // Try to use precomputed grades first if available
                 if !elevationPolyline.grades.isEmpty && indexA < elevationPolyline.grades.count {
                     grade = elevationPolyline.grades[indexA]
-                    print("Segment \(i): Using precomputed grade: \(grade)")
+                    //print("Segment \(i): Using precomputed grade: \(grade)")
                 }
                 // If grade is zero or grades aren't available, calculate it
                 else if horizontalDistance > 1.0 {  // Avoid division by very small numbers
                     grade = (elevationB - elevationA) / horizontalDistance
                     
                     // Debug elevation info
-                    print("Segment \(i): elevA=\(elevationA), elevB=\(elevationB), diff=\(elevationB-elevationA), horizDist=\(horizontalDistance), rawGrade=\(grade)")
+                    //print("Segment \(i): elevA=\(elevationA), elevB=\(elevationB), diff=\(elevationB-elevationA), horizDist=\(horizontalDistance), rawGrade=\(grade)")
                     
                     // Filter out unrealistic grades from GPS noise
                     // Real-world roads/trails rarely exceed 30-35% grade
                     if abs(grade) > 0.5 {  // 50% grade cutoff for realism
                         // Apply a more reasonable limit
-                        let oldGrade = grade
                         grade = grade > 0 ? 0.35 : -0.35
-                        print("  Clamping grade from \(oldGrade) to \(grade)")
+                        //print("  Clamping grade from previous value to \(grade)")
                     }
                     
                     // Apply a minimum threshold to avoid flat line when elevation is changing
                     if abs(grade) < 0.01 && abs(elevationB - elevationA) > 0.5 {
                         grade = (elevationB > elevationA) ? 0.01 : -0.01
-                        print("  Boosting small grade to \(grade)")
+                        //print("  Boosting small grade to \(grade)")
                     }
                 } else {
-                    print("Segment \(i): Horizontal distance too small (\(horizontalDistance)m), using grade=0")
+                    //print("Segment \(i): Horizontal distance too small (\(horizontalDistance)m), using grade=0")
                 }
                 
-                // Get color based on grade rather than absolute elevation
-                // Use actual grade for coloring
-                let debugForcedGradient = false
-                var colorGrade = grade
-                
-                if debugForcedGradient {
-                    // Force different colors by varying grades artificially based on location
-                    let cycle = Double(i % 5)
-                    if cycle < 1 {
-                        colorGrade = 0.03  // slight uphill - yellow-green
-                    } else if cycle < 2 {
-                        colorGrade = 0.09  // moderate uphill - orange
-                    } else if cycle < 3 {
-                        colorGrade = 0.18  // steep uphill - red
-                    } else if cycle < 4 {
-                        colorGrade = -0.03 // slight downhill - light blue
-                    } else {
-                        colorGrade = -0.09 // moderate downhill - medium blue
-                    }
-                    // Print every 10th segment for debugging
-                    if i % 10 == 0 {
-                        print("DEBUG FORCED GRADIENT: Segment \(i) forced grade \(colorGrade)")
-                    }
-                }
-                
-                let color = colorForGrade(colorGrade)
+                // Apply color for this grade
+                let color = colorForGrade(grade)
                 
                 // Set stroke color for this segment
                 ctx.setStrokeColor(color.cgColor)
@@ -317,7 +295,7 @@ class GradientPolylineRenderer: MKPolylineRenderer {
         var callCounter = self.callCounter
         callCounter += 1
         if callCounter % 20 == 0 {
-            print("colorForGrade call #\(callCounter): input: \(grade), clamped: \(clampedGrade)")
+            //print("colorForGrade call #\(callCounter): input: \(grade), clamped: \(clampedGrade)")
         }
         self.callCounter = callCounter
         
@@ -401,144 +379,398 @@ class GradientPolylineRenderer: MKPolylineRenderer {
     }
 }
 
-// UIViewRepresentable for MapKit
+// New pure elevation gradient polyline renderer
+class ElevationGradientPolylineRenderer: MKPolylineRenderer {
+    var elevationPolyline: ElevationPolyline?
+    var callCounter: Int = 0
+    
+    // Constants for color range
+    private let minSignificantValue: Double = 0.05  // 5% of range - slight color change
+    private let moderateValue: Double = 0.3        // 30% of range - moderate color change
+    private let strongValue: Double = 0.6          // 60% of range - strong color change
+    private let extremeValue: Double = 0.85        // 85% of range - extreme color change
+    
+    override func draw(_ mapRect: MKMapRect, zoomScale: MKZoomScale, in ctx: CGContext) {
+        guard let elevationPolyline = elevationPolyline else {
+            super.draw(mapRect, zoomScale: zoomScale, in: ctx)
+            return
+        }
+
+        // Start by getting the polyline's points in map coordinates
+        let points = polyline.points()
+        let pointCount = polyline.pointCount
+        
+        // We need at least 2 points to draw a line
+        if pointCount < 2 {
+            super.draw(mapRect, zoomScale: zoomScale, in: ctx)
+            return
+        }
+        
+        // Calculate line width with zoom adjustments
+        let baseLineWidth = self.lineWidth // Use the lineWidth property set from outside
+        let adjustedLineWidth = baseLineWidth / zoomScale
+
+        // Set up the context for drawing
+        ctx.saveGState()
+        ctx.setLineWidth(adjustedLineWidth)
+        ctx.setLineCap(.round)
+        ctx.setLineJoin(.round)
+        ctx.setShouldAntialias(true)
+        ctx.setAllowsAntialiasing(true)
+        
+        // Draw each segment with its corresponding color
+        for i in 0..<(pointCount-1) {
+            // Get map points for the segment
+            let pointA = points[i]
+            let pointB = points[i+1]
+            
+            // Convert to points in the renderer's coordinate system
+            let pixelPointA = point(for: MKMapPoint(x: pointA.x, y: pointA.y))
+            let pixelPointB = point(for: MKMapPoint(x: pointB.x, y: pointB.y))
+            
+            // Check if this segment is visible in the current map rect
+            let segmentRect = MKMapRect(x: min(pointA.x, pointB.x),
+                                       y: min(pointA.y, pointB.y),
+                                       width: abs(pointB.x - pointA.x),
+                                       height: abs(pointB.y - pointA.y))
+            
+            // Only draw if segment is visible
+            if mapRect.intersects(segmentRect) {
+                // Prevent out of bounds access
+                let indexA = min(i, elevationPolyline.elevations.count - 1)
+                
+                // Get current elevation
+                let elevation = elevationPolyline.elevations[indexA]
+                
+                // Calculate normalized elevation (0 to 1 scale)
+                var normalizedElevation = 0.5 // Default to middle (gray) if no elevation range
+                
+                if elevationPolyline.maxElevation > elevationPolyline.minElevation {
+                    normalizedElevation = (elevation - elevationPolyline.minElevation) / 
+                                         (elevationPolyline.maxElevation - elevationPolyline.minElevation)
+                }
+                
+                // Get color based on normalized elevation
+                let color = colorForNormalizedElevation(normalizedElevation)
+                
+                // Set stroke color for this segment
+                ctx.setStrokeColor(color.cgColor)
+                
+                // Draw the segment
+                ctx.beginPath()
+                ctx.move(to: pixelPointA)
+                ctx.addLine(to: pixelPointB)
+                ctx.strokePath()
+            }
+        }
+        
+        ctx.restoreGState()
+    }
+    
+    // Get color based on normalized elevation (0-1 scale)
+    private func colorForNormalizedElevation(_ value: Double) -> UIColor {
+        // Ensure value is in 0-1 range
+        let clampedValue = min(max(value, 0.0), 1.0)
+        
+        // Only log every 10th call to avoid console flood
+        var callCounter = self.callCounter
+        callCounter += 1
+        if callCounter % 20 == 0 {
+            //print("colorForNormalizedElevation call #\(callCounter): input: \(value), clamped: \(clampedValue)")
+        }
+        self.callCounter = callCounter
+        
+        // Color scheme for elevation:
+        // Low: Deep blue -> Medium blue -> Light blue
+        // Middle: Green/Yellow
+        // High: Yellow -> Orange -> Red
+        
+        if clampedValue < 0.5 {
+            // Lower half of elevation range (0.0-0.5 mapped to 0.0-1.0)
+            let scaledValue = clampedValue * 2 // Scale to 0-1 range
+            
+            if scaledValue < minSignificantValue {
+                // Deepest blue - lowest elevation
+                return UIColor(
+                    red: 0.0,
+                    green: 0.0,
+                    blue: 0.8,
+                    alpha: 1.0
+                )
+            } else if scaledValue < moderateValue {
+                // Medium blue
+                return UIColor(
+                    red: 0.0,
+                    green: 0.3,
+                    blue: 0.9,
+                    alpha: 1.0
+                )
+            } else if scaledValue < strongValue {
+                // Light blue
+                return UIColor(
+                    red: 0.0,
+                    green: 0.6,
+                    blue: 1.0,
+                    alpha: 1.0
+                )
+            } else {
+                // Cyan - approaching middle elevation
+                return UIColor(
+                    red: 0.0,
+                    green: 0.8,
+                    blue: 0.8,
+                    alpha: 1.0
+                )
+            }
+        } else {
+            // Upper half of elevation range (0.5-1.0 mapped to 0.0-1.0)
+            let scaledValue = (clampedValue - 0.5) * 2 // Scale to 0-1 range
+            
+            if scaledValue < minSignificantValue {
+                // Green - just above middle elevation
+                return UIColor(
+                    red: 0.1,
+                    green: 0.8,
+                    blue: 0.1,
+                    alpha: 1.0
+                )
+            } else if scaledValue < moderateValue {
+                // Yellow-green
+                return UIColor(
+                    red: 0.6,
+                    green: 0.8,
+                    blue: 0.0,
+                    alpha: 1.0
+                )
+            } else if scaledValue < strongValue {
+                // Yellow/orange
+                return UIColor(
+                    red: 1.0,
+                    green: 0.6,
+                    blue: 0.0,
+                    alpha: 1.0
+                )
+            } else if scaledValue < extremeValue {
+                // Orange/red - high elevation
+                return UIColor(
+                    red: 1.0,
+                    green: 0.3,
+                    blue: 0.0,
+                    alpha: 1.0
+                )
+            } else {
+                // Bright red - highest elevation
+                return UIColor(
+                    red: 1.0,
+                    green: 0.0,
+                    blue: 0.0,
+                    alpha: 1.0
+                )
+            }
+        }
+    }
+}
+
+
+// MARK: - SwiftUI map view
+
 struct MapView: UIViewRepresentable {
-    let trackSegments: [GPXTrackSegment]
+    let trackSegments: [RouteSegment]
+    // Set to true to re-fit the map to the whole route (reset by the caller afterwards)
+    var spanAll: Bool = false
+    // Index into the flattened route locations of the point selected in the elevation chart
+    var hoveredPointIndex: Int? = nil
     @EnvironmentObject var settings: SettingsModel
     
     // Convenience init to maintain backward compatibility
     init(routeLocations: [CLLocation]) {
-        self.trackSegments = [GPXTrackSegment(locations: routeLocations)]
+        self.trackSegments = [RouteSegment(locations: routeLocations)]
     }
     
-    // New initializer for multiple segments
-    init(trackSegments: [GPXTrackSegment]) {
+    init(trackSegments: [RouteSegment], spanAll: Bool = false, hoveredPointIndex: Int? = nil) {
         self.trackSegments = trackSegments
+        self.spanAll = spanAll
+        self.hoveredPointIndex = hoveredPointIndex
     }
     
     func makeUIView(context: Context) -> MKMapView {
         let mapView = MKMapView()
         mapView.delegate = context.coordinator
         mapView.showsUserLocation = false
+        mapView.preferredConfiguration = settings.mapStyle.mapConfiguration
+        context.coordinator.appliedMapStyle = settings.mapStyle
         
-        #if swift(>=5.7) && canImport(MapKit) && !targetEnvironment(macCatalyst)
-        if #available(iOS 16.0, *) {
-            mapView.preferredConfiguration = settings.mapStyle.mapConfiguration
-        } else {
-            mapView.mapType = settings.mapStyle.mapType
-        }
-        #else
-        mapView.mapType = settings.mapStyle.mapType
-        #endif
+        context.coordinator.isInitialLoad = true
         
-        // Skip if no segments
-        if trackSegments.isEmpty {
-            return mapView
-        }
+        guard !trackSegments.isEmpty else { return mapView }
         
-        // Collect all locations for region setting
         var allLocations: [CLLocation] = []
-        
-        // Store all polylines for the coordinator
         var elevationPolylines: [ElevationPolyline] = []
         
-        // Process each segment separately
-        for (index, segment) in trackSegments.enumerated() {
+        for segment in trackSegments {
             let locations = segment.locations
             guard !locations.isEmpty else { continue }
-            
-            // Add locations for region calculation later
             allLocations.append(contentsOf: locations)
             
-            // Create the enhanced elevation polyline for this segment
-            let elevationPolyline = createElevationPolyline(from: locations)
-            
-            // Calculate grade data (this will smooth and process elevation data)
+            let elevationPolyline = MapView.createElevationPolyline(from: locations)
             elevationPolyline.calculateGradeData(from: locations)
-            
-            // Debug elevation data
-            print("=== SEGMENT \(index+1) ELEVATION DATA SUMMARY ===")
-            print("Total points: \(elevationPolyline.elevations.count)")
-            print("Min elevation: \(elevationPolyline.minElevation)m")
-            print("Max elevation: \(elevationPolyline.maxElevation)m")
-            print("Total ascent: \(elevationPolyline.totalAscent)m")
-            print("Total descent: \(elevationPolyline.totalDescent)m")
-            print("Grade range: \(elevationPolyline.minGrade) to \(elevationPolyline.maxGrade)")
-            if !elevationPolyline.grades.isEmpty {
-                let nonZeroGrades = elevationPolyline.grades.filter { abs($0) > 0.005 }
-                print("Non-zero grades count: \(nonZeroGrades.count) of \(elevationPolyline.grades.count)")
-                
-                // Sample some grades
-                if nonZeroGrades.count > 0 {
-                    let sampleCount = min(5, nonZeroGrades.count)
-                    print("Sample grades: \(nonZeroGrades.prefix(sampleCount))")
-                }
-            }
-            print("==============================")
-            
-            // Add to map
             mapView.addOverlay(elevationPolyline)
-            
-            // Store the polyline for the coordinator
             elevationPolylines.append(elevationPolyline)
         }
         
-        // Store elevation polylines in coordinator for renderer to use
         context.coordinator.elevationPolylines = elevationPolylines
+        context.coordinator.appliedSignature = RouteSignature(
+            segmentPointCounts: trackSegments.map { $0.locations.count },
+            visualizationMode: settings.elevationVisualizationMode,
+            lineWidth: settings.trackLineWidth
+        )
         
-        // Set the visible region to show all tracks
         if !allLocations.isEmpty {
-            // Add significant elevation markers (Garmin-like)
-            addElevationMarkers(to: mapView, routeLocations: allLocations)
-            
-            // Set the region to show all segments
-            setRegion(for: mapView, from: allLocations)
-            
-            // Add start and end annotations using the first and last segments
-            if let firstSegment = trackSegments.first, 
-               let lastSegment = trackSegments.last,
-               let firstLocation = firstSegment.locations.first,
-               let lastLocation = lastSegment.locations.last {
-                
-                let startPoint = MKPointAnnotation()
-                startPoint.coordinate = firstLocation.coordinate
-                startPoint.title = "Start"
-                
-                let endPoint = MKPointAnnotation()
-                endPoint.coordinate = lastLocation.coordinate
-                endPoint.title = "End"
-                
-                mapView.addAnnotations([startPoint, endPoint])
-            }
+            MapView.addElevationMarkers(to: mapView, routeLocations: allLocations)
+            MapView.setRegion(for: mapView, from: allLocations)
+            MapView.addStartEndAnnotations(to: mapView, trackSegments: trackSegments)
         }
         
         return mapView
     }
     
     func updateUIView(_ mapView: MKMapView, context: Context) {
-        // Update map configuration if settings changed
-        #if swift(>=5.7) && canImport(MapKit) && !targetEnvironment(macCatalyst)
-        if #available(iOS 16.0, *) {
+        let coordinator = context.coordinator
+        
+        // Only touch the map configuration when the style actually changes
+        if coordinator.appliedMapStyle != settings.mapStyle {
             mapView.preferredConfiguration = settings.mapStyle.mapConfiguration
-        } else {
-            mapView.mapType = settings.mapStyle.mapType
+            coordinator.appliedMapStyle = settings.mapStyle
         }
-        #else
-        mapView.mapType = settings.mapStyle.mapType
-        #endif
+        
+        let existingHoverAnnotations = mapView.annotations.filter { $0.title == "Hover Point" }
+        
+        // Overlays (and their grade calculations) are expensive: rebuild them only when the
+        // segments or the renderer settings change, not on every hover update
+        let signature = MapView.RouteSignature(
+            segmentPointCounts: trackSegments.map { $0.locations.count },
+            visualizationMode: settings.elevationVisualizationMode,
+            lineWidth: settings.trackLineWidth
+        )
+        let routeChanged = coordinator.appliedSignature?.segmentPointCounts != signature.segmentPointCounts
+        let overlaysNeedRebuild = coordinator.appliedSignature != signature
+        
+        if overlaysNeedRebuild {
+            coordinator.clearOverlays(from: mapView)
+            
+            var newElevationPolylines: [ElevationPolyline] = []
+            for segment in trackSegments where !segment.locations.isEmpty {
+                let elevationPolyline = MapView.createElevationPolyline(from: segment.locations)
+                elevationPolyline.calculateGradeData(from: segment.locations)
+                mapView.addOverlay(elevationPolyline)
+                newElevationPolylines.append(elevationPolyline)
+            }
+            coordinator.elevationPolylines = newElevationPolylines
+            coordinator.appliedSignature = signature
+        }
+        
+        guard !trackSegments.isEmpty else {
+            coordinator.elevationPolylines = []
+            return
+        }
+        
+        let allLocations = trackSegments.flatMap { $0.locations }
+        
+        // Markers only need rebuilding when the route itself changes
+        if routeChanged {
+            let existingMarkerAnnotations = mapView.annotations.filter {
+                $0.title == "Start" || $0.title == "End" || $0.title == "Peak" || $0.title == "Valley"
+            }
+            mapView.removeAnnotations(existingMarkerAnnotations)
+            if !allLocations.isEmpty {
+                MapView.addElevationMarkers(to: mapView, routeLocations: allLocations)
+                MapView.addStartEndAnnotations(to: mapView, trackSegments: trackSegments)
+            }
+        }
+        
+        // Hover marker from the elevation chart, throttled to avoid map churn
+        if let hoveredIndex = hoveredPointIndex, hoveredIndex >= 0 && hoveredIndex < allLocations.count {
+            let now = Date()
+            let timeSinceLastUpdate = now.timeIntervalSince(context.coordinator.lastHoverUpdateTime)
+            let isDifferentIndex = hoveredIndex != context.coordinator.lastHoveredIndex
+            
+            if timeSinceLastUpdate >= context.coordinator.hoverThrottleInterval || isDifferentIndex {
+                let hoverLocation = allLocations[hoveredIndex]
+                let elevation = hoverLocation.altitude
+                let formattedElevation = settings.useMetricSystem
+                    ? String(format: "%.0f m", elevation)
+                    : String(format: "%.0f ft", elevation * 3.28084)
+                let subtitle = "Elevation: \(formattedElevation)"
+                
+                if let existingPoint = existingHoverAnnotations.first as? MKPointAnnotation {
+                    let existingCoord = existingPoint.coordinate
+                    let newCoord = hoverLocation.coordinate
+                    let significantMove = abs(existingCoord.latitude - newCoord.latitude) > 0.0001
+                        || abs(existingCoord.longitude - newCoord.longitude) > 0.0001
+                    if significantMove {
+                        existingPoint.coordinate = newCoord
+                    }
+                    if existingPoint.subtitle != subtitle {
+                        existingPoint.subtitle = subtitle
+                    }
+                } else {
+                    if !existingHoverAnnotations.isEmpty {
+                        mapView.removeAnnotations(existingHoverAnnotations)
+                    }
+                    let hoverPoint = MKPointAnnotation()
+                    hoverPoint.coordinate = hoverLocation.coordinate
+                    hoverPoint.title = "Hover Point"
+                    hoverPoint.subtitle = subtitle
+                    mapView.addAnnotation(hoverPoint)
+                }
+                
+                context.coordinator.lastHoverUpdateTime = now
+                context.coordinator.lastHoveredIndex = hoveredIndex
+            }
+        } else if !existingHoverAnnotations.isEmpty {
+            mapView.removeAnnotations(existingHoverAnnotations)
+            context.coordinator.lastHoveredIndex = nil
+        }
+        
+        if spanAll {
+            // Fit to the whole route on request (only once per trigger)
+            if !coordinator.didConsumeSpanRequest && !allLocations.isEmpty {
+                MapView.setRegion(for: mapView, from: allLocations, animated: true)
+                coordinator.didConsumeSpanRequest = true
+            }
+        } else {
+            coordinator.didConsumeSpanRequest = false
+            if coordinator.isInitialLoad {
+                if !allLocations.isEmpty {
+                    coordinator.performDelayedZoom(mapView: mapView, locations: allLocations)
+                }
+            } else if routeChanged && !allLocations.isEmpty {
+                // Segments appeared or changed: refit
+                MapView.setRegion(for: mapView, from: allLocations)
+            }
+        }
     }
     
-    private func createElevationPolyline(from locations: [CLLocation]) -> ElevationPolyline {
+    // What the overlays were last built from; a change means they must be rebuilt
+    struct RouteSignature: Equatable {
+        let segmentPointCounts: [Int]
+        let visualizationMode: ElevationVisualizationMode
+        let lineWidth: Double
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+    
+    // MARK: Helpers
+    
+    static func createElevationPolyline(from locations: [CLLocation]) -> ElevationPolyline {
         let coordinates = locations.map { $0.coordinate }
         let elevations = locations.map { $0.altitude }
         
-        // Create the polyline with coordinates
         let elevationPolyline = ElevationPolyline(coordinates: coordinates, count: coordinates.count)
-        
-        // Store the elevations
         elevationPolyline.elevations = elevations
         
-        // Calculate min and max elevations for scaling the gradient
         if let minEle = elevations.min(), let maxEle = elevations.max() {
             elevationPolyline.minElevation = minEle
             elevationPolyline.maxElevation = maxEle
@@ -547,78 +779,69 @@ struct MapView: UIViewRepresentable {
         return elevationPolyline
     }
     
-    private func addElevationMarkers(to mapView: MKMapView, routeLocations: [CLLocation]) {
+    static func addStartEndAnnotations(to mapView: MKMapView, trackSegments: [RouteSegment]) {
+        guard let firstLocation = trackSegments.first?.locations.first,
+              let lastLocation = trackSegments.last?.locations.last else { return }
+        
+        let startPoint = MKPointAnnotation()
+        startPoint.coordinate = firstLocation.coordinate
+        startPoint.title = "Start"
+        
+        let endPoint = MKPointAnnotation()
+        endPoint.coordinate = lastLocation.coordinate
+        endPoint.title = "End"
+        
+        mapView.addAnnotations([startPoint, endPoint])
+    }
+    
+    // Garmin-style peak/valley markers for significant local extremes
+    static func addElevationMarkers(to mapView: MKMapView, routeLocations: [CLLocation]) {
         guard routeLocations.count > 10 else { return }
         
         let elevations = routeLocations.map { $0.altitude }
-        
-        // Find local maxima and minima that are significant
         var significantPoints: [(index: Int, elevation: Double, isMax: Bool)] = []
-        let windowSize = max(routeLocations.count / 20, 5) // Adaptive window size
+        let windowSize = max(routeLocations.count / 20, 5)
         
         for i in windowSize..<(routeLocations.count - windowSize) {
             let currentElev = elevations[i]
-            
-            // Check if this is a local maximum
             var isLocalMax = true
-            for j in (i-windowSize)...(i+windowSize) {
-                if j != i && elevations[j] > currentElev {
-                    isLocalMax = false
-                    break
-                }
-            }
-            
-            // Check if this is a local minimum
             var isLocalMin = true
+            var sum = 0.0
+            
             for j in (i-windowSize)...(i+windowSize) {
-                if j != i && elevations[j] < currentElev {
-                    isLocalMin = false
-                    break
+                sum += elevations[j]
+                if j != i {
+                    if elevations[j] > currentElev { isLocalMax = false }
+                    if elevations[j] < currentElev { isLocalMin = false }
                 }
             }
             
-            // Only add points that are significantly different from their surroundings
             if isLocalMax || isLocalMin {
-                // Calculate average elevation in the window
-                var sum = 0.0
-                for j in (i-windowSize)...(i+windowSize) {
-                    sum += elevations[j]
-                }
                 let avgElev = sum / Double(2 * windowSize + 1)
-                
-                // Check if the difference is significant (>= 10 meters)
-                let elevDiff = abs(currentElev - avgElev)
-                if elevDiff >= 10 {
+                if abs(currentElev - avgElev) >= 10 {
                     significantPoints.append((i, currentElev, isLocalMax))
                 }
             }
         }
         
-        // Add elevation markers for significant points (limit to avoid clutter)
         let maxMarkers = 5
         if significantPoints.count > maxMarkers {
-            // Sort by elevation difference and take top ones
             significantPoints.sort { abs($0.elevation) > abs($1.elevation) }
             significantPoints = Array(significantPoints.prefix(maxMarkers))
         }
         
-        // Create annotations for these points
         for point in significantPoints {
             let annotation = MKPointAnnotation()
             annotation.coordinate = routeLocations[point.index].coordinate
-            
-            let elevationFormatted = Int(round(point.elevation))
             annotation.title = point.isMax ? "Peak" : "Valley"
-            annotation.subtitle = "\(elevationFormatted)m"
-            
+            annotation.subtitle = "\(Int(round(point.elevation)))m"
             mapView.addAnnotation(annotation)
         }
     }
     
-    private func setRegion(for mapView: MKMapView, from locations: [CLLocation]) {
+    static func setRegion(for mapView: MKMapView, from locations: [CLLocation], animated: Bool = false) {
         guard !locations.isEmpty else { return }
         
-        // Find min/max coordinates
         var minLat = locations[0].coordinate.latitude
         var maxLat = minLat
         var minLon = locations[0].coordinate.longitude
@@ -631,68 +854,82 @@ struct MapView: UIViewRepresentable {
             maxLon = max(maxLon, location.coordinate.longitude)
         }
         
-        // Create region with padding
         let center = CLLocationCoordinate2D(
             latitude: (minLat + maxLat) / 2,
             longitude: (minLon + maxLon) / 2
         )
         
-        let span = MKCoordinateSpan(
-            latitudeDelta: (maxLat - minLat) * 1.5,
-            longitudeDelta: (maxLon - minLon) * 1.5
-        )
-        
-        // Ensure minimum zoom level
         let region = MKCoordinateRegion(
             center: center,
             span: MKCoordinateSpan(
-                latitudeDelta: max(span.latitudeDelta, 0.01),
-                longitudeDelta: max(span.longitudeDelta, 0.01)
+                latitudeDelta: max((maxLat - minLat) * 1.5, 0.01),
+                longitudeDelta: max((maxLon - minLon) * 1.5, 0.01)
             )
         )
         
-        mapView.setRegion(region, animated: false)
+        mapView.setRegion(region, animated: animated)
     }
     
-    func makeCoordinator() -> Coordinator {
-        Coordinator()
-    }
+    // MARK: Coordinator
     
     class Coordinator: NSObject, MKMapViewDelegate {
         var elevationPolylines: [ElevationPolyline] = []
+        var isInitialLoad = false
+        var delayedZoomTimer: Timer?
+        var lastHoverUpdateTime = Date.distantPast
+        var lastHoveredIndex: Int?
+        let hoverThrottleInterval: TimeInterval = 0.25
+        var appliedSignature: RouteSignature?
+        var appliedMapStyle: MapStyle?
+        var didConsumeSpanRequest = false
         
-        // Keep the single polyline property for backward compatibility
-        var elevationPolyline: ElevationPolyline? {
-            get {
-                return elevationPolylines.first
-            }
-            set {
-                if let newValue = newValue {
-                    elevationPolylines = [newValue]
-                } else {
-                    elevationPolylines = []
-                }
+        deinit {
+            delayedZoomTimer?.invalidate()
+        }
+        
+        func clearOverlays(from mapView: MKMapView) {
+            mapView.removeOverlays(mapView.overlays)
+        }
+        
+        // Initial fit happens after a short delay so the map has laid out
+        func performDelayedZoom(mapView: MKMapView, locations: [CLLocation]) {
+            delayedZoomTimer?.invalidate()
+            delayedZoomTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { [weak self] _ in
+                MapView.setRegion(for: mapView, from: locations)
+                self?.isInitialLoad = false
             }
         }
         
         func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
-            if let polyline = overlay as? ElevationPolyline {
-                // Create a custom gradient polyline renderer
-                let gradientRenderer = GradientPolylineRenderer(polyline: polyline)
-                
-                // Configure it to use our elevation data
-                gradientRenderer.elevationPolyline = polyline
-                gradientRenderer.lineWidth = 12  // Increased line width for better visibility
-                
-                return gradientRenderer
+            guard let polyline = overlay as? ElevationPolyline else {
+                return MKOverlayRenderer(overlay: overlay)
             }
-            return MKOverlayRenderer(overlay: overlay)
+            
+            // Renderer choice and width come from user settings
+            let modeString = UserDefaults.standard.string(forKey: "elevationVisualizationMode") ?? ""
+            let mode = ElevationVisualizationMode(rawValue: modeString) ?? .effort
+            let storedWidth = UserDefaults.standard.double(forKey: "trackLineWidth")
+            let lineWidth = (2...10).contains(storedWidth) ? storedWidth : 4
+            
+            switch mode {
+            case .effort:
+                let renderer = GradientPolylineRenderer(polyline: polyline)
+                renderer.elevationPolyline = polyline
+                renderer.lineWidth = lineWidth
+                return renderer
+            case .gradient:
+                let renderer = ElevationGradientPolylineRenderer(polyline: polyline)
+                renderer.elevationPolyline = polyline
+                renderer.lineWidth = lineWidth
+                return renderer
+            }
         }
         
         func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
             guard !annotation.isKind(of: MKUserLocation.self) else { return nil }
             
-            let identifier = "WorkoutPin"
+            let isHover = annotation.title == "Hover Point"
+            let identifier = isHover ? "HoverPin" : "WorkoutPin"
             var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
             
             if annotationView == nil {
@@ -702,23 +939,30 @@ struct MapView: UIViewRepresentable {
                 annotationView?.annotation = annotation
             }
             
-            if let markerView = annotationView as? MKMarkerAnnotationView {
-                // Set appearance based on annotation type
-                if annotation.title == "Start" {
-                    markerView.markerTintColor = .green
-                    markerView.glyphImage = UIImage(systemName: "flag.fill")
-                } else if annotation.title == "End" {
-                    markerView.markerTintColor = .red
-                    markerView.glyphImage = UIImage(systemName: "flag.checkered")
-                } else if annotation.title == "Peak" {
-                    markerView.markerTintColor = .orange
-                    markerView.glyphImage = UIImage(systemName: "arrow.up")
-                    markerView.displayPriority = .defaultLow // Lower priority to avoid clutter
-                } else if annotation.title == "Valley" {
-                    markerView.markerTintColor = .blue
-                    markerView.glyphImage = UIImage(systemName: "arrow.down")
-                    markerView.displayPriority = .defaultLow // Lower priority to avoid clutter
-                }
+            guard let markerView = annotationView as? MKMarkerAnnotationView else { return annotationView }
+            
+            switch annotation.title ?? nil {
+            case "Hover Point":
+                markerView.markerTintColor = .systemRed
+                markerView.glyphImage = UIImage(systemName: "location.fill")
+                markerView.animatesWhenAdded = true
+                markerView.displayPriority = .required
+            case "Start":
+                markerView.markerTintColor = .green
+                markerView.glyphImage = UIImage(systemName: "flag.fill")
+            case "End":
+                markerView.markerTintColor = .red
+                markerView.glyphImage = UIImage(systemName: "flag.checkered")
+            case "Peak":
+                markerView.markerTintColor = .orange
+                markerView.glyphImage = UIImage(systemName: "arrow.up")
+                markerView.displayPriority = .defaultLow
+            case "Valley":
+                markerView.markerTintColor = .blue
+                markerView.glyphImage = UIImage(systemName: "arrow.down")
+                markerView.displayPriority = .defaultLow
+            default:
+                break
             }
             
             return annotationView

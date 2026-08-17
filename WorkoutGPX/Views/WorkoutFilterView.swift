@@ -1,27 +1,38 @@
 import SwiftUI
 import HealthKit
 
+// An activity type together with how many workouts of that type are in the current range
+struct WorkoutTypeCount: Identifiable {
+    let type: HKWorkoutActivityType
+    let count: Int
+    var id: UInt { type.rawValue }
+}
+
 // Workout filter view
 struct WorkoutFilterView: View {
+    // Selected activity types; empty means "All"
     @Binding var selectedWorkoutTypes: Set<HKWorkoutActivityType>
+    // Types present in the fetched date range, most common first
+    var availableWorkoutTypes: [WorkoutTypeCount]
+    // Whether workouts with no route data are listed at all
+    @Binding var showWorkoutsWithoutRoutes: Bool
+    // How many workouts in range are currently hidden for lacking route data
+    var hiddenWithoutRouteCount: Int
     @Binding var startDate: Date
     @Binding var endDate: Date
     @Binding var showFilters: Bool
     var applyFilters: () async -> Void
     
-    // Define a constant for "All Workouts" type with a custom raw value
-    private let allWorkoutsType: HKWorkoutActivityType = {
-        // Using a high, unlikely-to-be-used value for "All Workouts"
-        return HKWorkoutActivityType(rawValue: 999)!
-    }()
-    
-    // Workout types available in the filter
-    private let workoutTypes: [(HKWorkoutActivityType, String, String)] = [
-        (.running, "Running", "figure.run"),
-        (.walking, "Walking", "figure.walk"),
-        (.hiking, "Hiking", "mountain.2"),
-        (.cycling, "Cycling", "figure.outdoor.cycle")
-    ]
+    // Chips to show: every type in the range, plus any selected type that has
+    // dropped out of the range (so the user can still see and clear it)
+    private var chipTypes: [WorkoutTypeCount] {
+        let present = Set(availableWorkoutTypes.map(\.type))
+        let missingSelected = selectedWorkoutTypes
+            .filter { !present.contains($0) }
+            .map { WorkoutTypeCount(type: $0, count: 0) }
+            .sorted { workoutActivityTypeString($0.type) < workoutActivityTypeString($1.type) }
+        return availableWorkoutTypes + missingSelected
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -36,49 +47,49 @@ struct WorkoutFilterView: View {
                     
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 10) {
-                            // "All Workouts" button
-                            Button(action: {
-                                toggleWorkoutType(allWorkoutsType)
-                            }) {
-                                VStack {
-                                    Image(systemName: "star.circle")
-                                        .font(.system(size: 20))
-                                    Text("All")
-                                        .font(.caption)
-                                }
-                                .frame(width: 70, height: 60)
-                                .background(selectedWorkoutTypes.contains(allWorkoutsType) ? Color.blue.opacity(0.2) : Color.gray.opacity(0.1))
-                                .foregroundColor(selectedWorkoutTypes.contains(allWorkoutsType) ? .blue : .primary)
-                                .cornerRadius(8)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .stroke(selectedWorkoutTypes.contains(allWorkoutsType) ? Color.blue : Color.clear, lineWidth: 2)
-                                )
+                            // "All" chip: selected whenever no specific type is chosen
+                            WorkoutTypeChip(
+                                title: "All",
+                                icon: "star.circle",
+                                count: availableWorkoutTypes.reduce(0) { $0 + $1.count },
+                                isSelected: selectedWorkoutTypes.isEmpty
+                            ) {
+                                selectedWorkoutTypes.removeAll()
                             }
                             
-                            // Regular workout type buttons
-                            ForEach(workoutTypes, id: \.0) { type, name, icon in
-                                Button(action: {
-                                    toggleWorkoutType(type)
-                                }) {
-                                    VStack {
-                                        Image(systemName: icon)
-                                            .font(.system(size: 20))
-                                        Text(name)
-                                            .font(.caption)
-                                    }
-                                    .frame(width: 70, height: 60)
-                                    .background(selectedWorkoutTypes.contains(type) ? Color.blue.opacity(0.2) : Color.gray.opacity(0.1))
-                                    .foregroundColor(selectedWorkoutTypes.contains(type) ? .blue : .primary)
-                                    .cornerRadius(8)
-                                    .overlay(
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .stroke(selectedWorkoutTypes.contains(type) ? Color.blue : Color.clear, lineWidth: 2)
-                                    )
+                            // One chip per activity type present in the current range
+                            ForEach(chipTypes) { entry in
+                                WorkoutTypeChip(
+                                    title: workoutActivityTypeString(entry.type),
+                                    icon: workoutIcon(for: entry.type),
+                                    count: entry.count,
+                                    isSelected: selectedWorkoutTypes.contains(entry.type)
+                                ) {
+                                    toggleWorkoutType(entry.type)
                                 }
                             }
                         }
                     }
+                    
+                    if availableWorkoutTypes.isEmpty {
+                        Text("No workouts in this date range yet — adjust the dates and apply.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    // Workouts without GPS (indoor, strength, yoga…) have nothing to export
+                    Toggle(isOn: $showWorkoutsWithoutRoutes) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Show workouts without GPS")
+                                .font(.subheadline)
+                            if hiddenWithoutRouteCount > 0 {
+                                Text("\(hiddenWithoutRouteCount) hidden in this range")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    }
+                    .padding(.top, 4)
                 }
                 
                 // Date range selector
@@ -145,33 +156,12 @@ struct WorkoutFilterView: View {
         }
     }
     
+    // Toggle a type in the selection; clearing the last one falls back to "All"
     private func toggleWorkoutType(_ type: HKWorkoutActivityType) {
-        // Special handling for "All Workouts"
-        if type.rawValue == allWorkoutsType.rawValue {
-            if selectedWorkoutTypes.contains(allWorkoutsType) {
-                // Don't allow deselecting if it's the only selected type
-                if selectedWorkoutTypes.count > 1 {
-                    selectedWorkoutTypes.remove(allWorkoutsType)
-                }
-            } else {
-                // Select only "All Workouts" and remove all others
-                selectedWorkoutTypes = [allWorkoutsType]
-            }
+        if selectedWorkoutTypes.contains(type) {
+            selectedWorkoutTypes.remove(type)
         } else {
-            // Regular workout type handling
-            if selectedWorkoutTypes.contains(type) {
-                // Don't allow deselecting if it's the only selected type
-                if selectedWorkoutTypes.count > 1 {
-                    selectedWorkoutTypes.remove(type)
-                }
-            } else {
-                selectedWorkoutTypes.insert(type)
-                
-                // Remove "All Workouts" option if it was selected
-                if selectedWorkoutTypes.contains(allWorkoutsType) {
-                    selectedWorkoutTypes.remove(allWorkoutsType)
-                }
-            }
+            selectedWorkoutTypes.insert(type)
         }
     }
     
@@ -193,5 +183,40 @@ struct WorkoutFilterView: View {
     private func setLastYear() {
         endDate = Date()
         startDate = Calendar.current.date(byAdding: .year, value: -1, to: endDate) ?? endDate
+    }
+}
+
+// A selectable activity-type chip showing icon, name and workout count
+struct WorkoutTypeChip: View {
+    let title: String
+    let icon: String
+    let count: Int
+    let isSelected: Bool
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 2) {
+                Image(systemName: icon)
+                    .font(.system(size: 20))
+                    .frame(height: 24)
+                Text(title)
+                    .font(.caption)
+                    .lineLimit(1)
+                Text("\(count)")
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
+            .padding(.horizontal, 8)
+            .frame(minWidth: 70, minHeight: 64)
+            .background(isSelected ? Color.blue.opacity(0.2) : Color.gray.opacity(0.1))
+            .foregroundColor(isSelected ? .blue : .primary)
+            .cornerRadius(8)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(isSelected ? Color.blue : Color.clear, lineWidth: 2)
+            )
+        }
+        .buttonStyle(.plain)
     }
 }
