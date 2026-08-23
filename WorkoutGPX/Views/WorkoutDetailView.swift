@@ -132,6 +132,7 @@ struct WorkoutDetailView: View {
                 } label: {
                     Image(systemName: "slider.horizontal.3")
                 }
+                .accessibilityIdentifier("view-options-menu")
                 .disabled(trackSegments.isEmpty || isLoading)
                 
                 Button(action: {
@@ -143,6 +144,7 @@ struct WorkoutDetailView: View {
                         Image(systemName: "square.and.arrow.up")
                     }
                 }
+                .accessibilityIdentifier("export-button")
                 .disabled(trackSegments.isEmpty || isLoading || isExporting)
             }
         }

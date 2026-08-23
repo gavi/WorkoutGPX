@@ -308,6 +308,7 @@ struct ElevationChartView: View {
                 Rectangle()
                     .fill(Color.clear)
                     .contentShape(Rectangle())
+                    .accessibilityIdentifier("elevation-chart")
                     .gesture(
                         DragGesture(minimumDistance: 0)
                             .onChanged { value in
@@ -318,6 +319,13 @@ struct ElevationChartView: View {
                                 }
                             }
                             .onEnded { _ in
+                                #if targetEnvironment(simulator)
+                                // The screenshot harness (WorkoutGPXUITests) can't hold a
+                                // finger down while capturing, so it keeps the map marker
+                                if ProcessInfo.processInfo.arguments.contains("-keepChartSelection") {
+                                    return
+                                }
+                                #endif
                                 // Keep the marker on the chart; the map marker is released
                                 onSelect?(nil)
                             }

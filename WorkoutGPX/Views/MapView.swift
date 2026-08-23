@@ -574,6 +574,9 @@ class ElevationGradientPolylineRenderer: MKPolylineRenderer {
 
 // MARK: - SwiftUI map view
 
+// Marker that follows the finger across the elevation chart; identified by type, not title
+final class HoverAnnotation: MKPointAnnotation {}
+
 struct MapView: UIViewRepresentable {
     let trackSegments: [RouteSegment]
     // Set to true to re-fit the map to the whole route (reset by the caller afterwards)
@@ -643,7 +646,7 @@ struct MapView: UIViewRepresentable {
             coordinator.appliedMapStyle = settings.mapStyle
         }
         
-        let existingHoverAnnotations = mapView.annotations.filter { $0.title == "Hover Point" }
+        let existingHoverAnnotations = mapView.annotations.filter { $0 is HoverAnnotation }
         
         // Overlays (and their grade calculations) are expensive: rebuild them only when the
         // segments or the renderer settings change, not on every hover update
@@ -697,12 +700,12 @@ struct MapView: UIViewRepresentable {
             if timeSinceLastUpdate >= context.coordinator.hoverThrottleInterval || isDifferentIndex {
                 let hoverLocation = allLocations[hoveredIndex]
                 let elevation = hoverLocation.altitude
+                // The marker is labelled with the elevation at that point
                 let formattedElevation = settings.useMetricSystem
                     ? String(format: "%.0f m", elevation)
                     : String(format: "%.0f ft", elevation * 3.28084)
-                let subtitle = "Elevation: \(formattedElevation)"
                 
-                if let existingPoint = existingHoverAnnotations.first as? MKPointAnnotation {
+                if let existingPoint = existingHoverAnnotations.first as? HoverAnnotation {
                     let existingCoord = existingPoint.coordinate
                     let newCoord = hoverLocation.coordinate
                     let significantMove = abs(existingCoord.latitude - newCoord.latitude) > 0.0001
@@ -710,17 +713,16 @@ struct MapView: UIViewRepresentable {
                     if significantMove {
                         existingPoint.coordinate = newCoord
                     }
-                    if existingPoint.subtitle != subtitle {
-                        existingPoint.subtitle = subtitle
+                    if existingPoint.title != formattedElevation {
+                        existingPoint.title = formattedElevation
                     }
                 } else {
                     if !existingHoverAnnotations.isEmpty {
                         mapView.removeAnnotations(existingHoverAnnotations)
                     }
-                    let hoverPoint = MKPointAnnotation()
+                    let hoverPoint = HoverAnnotation()
                     hoverPoint.coordinate = hoverLocation.coordinate
-                    hoverPoint.title = "Hover Point"
-                    hoverPoint.subtitle = subtitle
+                    hoverPoint.title = formattedElevation
                     mapView.addAnnotation(hoverPoint)
                 }
                 
@@ -928,7 +930,7 @@ struct MapView: UIViewRepresentable {
         func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
             guard !annotation.isKind(of: MKUserLocation.self) else { return nil }
             
-            let isHover = annotation.title == "Hover Point"
+            let isHover = annotation is HoverAnnotation
             let identifier = isHover ? "HoverPin" : "WorkoutPin"
             var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
             
@@ -941,12 +943,15 @@ struct MapView: UIViewRepresentable {
             
             guard let markerView = annotationView as? MKMarkerAnnotationView else { return annotationView }
             
-            switch annotation.title ?? nil {
-            case "Hover Point":
+            if isHover {
                 markerView.markerTintColor = .systemRed
                 markerView.glyphImage = UIImage(systemName: "location.fill")
                 markerView.animatesWhenAdded = true
                 markerView.displayPriority = .required
+                return markerView
+            }
+            
+            switch annotation.title ?? nil {
             case "Start":
                 markerView.markerTintColor = .green
                 markerView.glyphImage = UIImage(systemName: "flag.fill")

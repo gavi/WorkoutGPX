@@ -1,0 +1,58 @@
+WorkoutGPX — App Store listing copy (English, U.S.)
+====================================================
+
+Version 1.4 — What's New
+------------------------
+• Filters stay put after each export — no more resetting the end date when exporting a multi‑day trip
+• No more 500‑workout limit: your entire history is available
+• Every workout type is supported, with a count for each
+• Workouts without GPS are hidden by default (toggle in Filters)
+• GPX files now include heart rate, cadence, power, speed, and course for Strava, Garmin Connect, Komoot, and more
+• New route viewer: elevation profile you can scrub, route coloring by effort or grade, peaks and valleys, route info overlay, Fit to Route
+• New settings for map style, line width, overlays, and chart detail
+
+Requires iOS 16 or later.
+
+
+Promotional Text (170 characters max)
+-------------------------------------
+Export your full Apple Health workout history as GPX — no limits, every activity type, with heart rate, cadence and power. 100% on‑device, nothing leaves your phone.
+
+
+Description
+-----------
+Export your Apple Health workouts as GPX files — every workout, every activity type, with the sensor data your other apps expect.
+
+WorkoutGPX connects directly to Apple Health and turns any GPS‑tracked workout into an industry‑standard GPX file you can open in Strava, Garmin Connect, Komoot, Google Earth, or any mapping app. Whether you want to analyze a run, share a cycling route, back up years of hikes, or move your data off your watch, WorkoutGPX makes it a few taps.
+
+KEY FEATURES
+
+• Your Complete History: No limits. Browse and export every workout Apple Health has recorded, going back as far as your data does.
+
+• Every Activity Type: Running, walking, hiking, cycling, swimming, skiing, rowing, and any other workout with a GPS route. Workouts without location data are tucked away so the list shows only what you can export.
+
+• Rich GPX Files: Each track point carries timestamp, coordinates, and elevation, plus heart rate, cadence, power, speed, and course using the standard Garmin extensions — so fitness platforms import your full effort, not just the line on the map.
+
+• Built‑in Route Viewer: See each route on the map, colored by effort, grade, or elevation, with peaks and valleys marked. Scrub the elevation profile to follow your progress point by point.
+
+• Smart Filters: Narrow your workouts by activity type and date range with quick presets. Your filters stay in place while you export, so bulk‑exporting a trip is fast.
+
+• Effortless Sharing: Send GPX files via AirDrop, Messages, Mail, Files, cloud storage, or any app that accepts files.
+
+• Your Choice of Units and Map: Metric or imperial, standard, satellite, or hybrid maps, adjustable line width, and optional sensor data in exports.
+
+• Privacy First: WorkoutGPX has no servers and collects nothing. All processing happens on your device, and your health data only leaves it when you choose to share a file.
+
+WorkoutGPX is for athletes tracking training, travelers documenting trips, and anyone who wants full control over their own workout data.
+
+
+Screenshot captions (see make-butterkit.py)
+-------------------------------------------
+Hero (workout list):  WorkoutGPX — Apple Health workouts, exported as GPX
+1.  Filter by activity and date
+2.  See every climb and descent
+3.  Scrub the elevation profile
+4.  Color routes by elevation
+5.  Satellite and hybrid maps
+6.  Units, maps and sensor data
+7.  Share GPX files anywhere

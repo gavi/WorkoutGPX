@@ -53,40 +53,23 @@ class HealthStore: ObservableObject {
         }
     }
     
+    // Simulator only: builds the demo workout list from the bundled sample tracks
     private func loadSampleData() {
+        #if targetEnvironment(simulator)
         sampleTracks = GPXParser.loadSampleTracks()
         
-        // In simulator mode, directly populate the workouts array
-        var simulatedWorkouts: [HKWorkout] = []
-        
-        // Store track data for each track
-        for track in sampleTracks {
-            let uuid = UUID()
-            // Store track with a generated UUID as key
-            sampleTrackData[uuid] = track
-            
-            // Create a simulated workout
-            let workout = HKWorkout(
-                activityType: track.workoutType,
-                start: Date().addingTimeInterval(-3600), // 1 hour ago
-                end: Date(),
-                duration: 3600,
-                totalEnergyBurned: nil,
-                totalDistance: nil,
-                metadata: [
-                    "name": track.name,
-                    "source": "GPX Sample",
-                    "trackUUID": uuid.uuidString
-                ]
-            )
-            
-            simulatedWorkouts.append(workout)
+        let demos = SimulatorDemoData.makeWorkouts(from: sampleTracks)
+        for demo in demos {
+            if let track = demo.track,
+               let trackUUIDString = demo.workout.metadata?["trackUUID"] as? String,
+               let trackUUID = UUID(uuidString: trackUUIDString) {
+                sampleTrackData[trackUUID] = track
+            }
         }
+        self.workouts = demos.map(\.workout)
         
-        // Set the workouts array directly
-        self.workouts = simulatedWorkouts
-        
-        print("Loaded \(sampleTracks.count) sample tracks for simulator use")
+        print("Loaded \(demos.count) demo workouts from \(sampleTracks.count) sample tracks for simulator use")
+        #endif
     }
     
     @MainActor
@@ -214,8 +197,12 @@ class HealthStore: ObservableObject {
             
             // Just make sure workouts are sorted by date (most recent first)
             self.workouts = self.workouts.sorted { $0.startDate > $1.startDate }
-            // Every sample workout is backed by a GPX track
-            self.workoutsWithRoutes = Set(self.workouts.map(\.uuid))
+            // Demo workouts backed by a GPX track carry its UUID in their metadata
+            self.workoutsWithRoutes = Set(
+                self.workouts
+                    .filter { $0.metadata?["trackUUID"] != nil }
+                    .map(\.uuid)
+            )
             
             print("Using all \(self.workouts.count) sample workouts for simulator (ignoring filters)")
             return

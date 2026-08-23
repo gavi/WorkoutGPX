@@ -82,79 +82,58 @@ struct RouteTrack {
 
 class GPXParser {
     
+    // Every track in every bundled sample GPX file (the files are multi-track
+    // Garmin exports, so one file can contribute several routes)
     static func loadSampleTracks() -> [RouteTrack] {
-        var tracks: [RouteTrack] = []
-        
-        // Look for GPX files in the Samples directory
-        let samplesDirPath = Bundle.main.bundlePath + "/Samples"
         let fileManager = FileManager.default
+        var sampleURLs: [URL] = []
         
-        if fileManager.fileExists(atPath: samplesDirPath) {
-            do {
-                let files = try fileManager.contentsOfDirectory(atPath: samplesDirPath)
-                for file in files where file.hasSuffix(".gpx") {
-                    let fileURL = URL(fileURLWithPath: samplesDirPath + "/" + file)
-                    print("Loading sample from: \(fileURL.lastPathComponent)")
-                    if let track = parseGPXFile(at: fileURL) {
-                        tracks.append(track)
-                    }
-                }
-            } catch {
-                print("Error reading Samples directory: \(error)")
-            }
-        } else {
-            print("Samples directory not found in bundle path")
+        // Bundled as a folder reference ("Samples/") or as loose resources
+        let samplesDirPath = Bundle.main.bundlePath + "/Samples"
+        if fileManager.fileExists(atPath: samplesDirPath),
+           let files = try? fileManager.contentsOfDirectory(atPath: samplesDirPath) {
+            sampleURLs = files
+                .filter { $0.hasSuffix(".gpx") }
+                .map { URL(fileURLWithPath: samplesDirPath + "/" + $0) }
+        }
+        if sampleURLs.isEmpty {
+            sampleURLs = Bundle.main.urls(forResourcesWithExtension: "gpx", subdirectory: nil) ?? []
         }
         
-        // Try to find using resource URLs
-        if let samplesURLs = Bundle.main.urls(forResourcesWithExtension: "gpx", subdirectory: nil) {
-            print("Found \(samplesURLs.count) gpx files via Bundle.main.urls")
-            for url in samplesURLs {
-                print("Loading sample from: \(url.lastPathComponent)")
-                if let track = parseGPXFile(at: url) {
-                    tracks.append(track)
-                }
-            }
-        }
-        
-        print("Loaded \(tracks.count) sample tracks from assets")
+        let tracks = sampleURLs
+            .sorted { $0.lastPathComponent < $1.lastPathComponent }
+            .flatMap { parseGPXFile(at: $0) }
+        print("Loaded \(tracks.count) sample tracks from \(sampleURLs.count) GPX files")
         return tracks
-    }    
-    static func parseGPXFile(at url: URL) -> RouteTrack? {
-        guard let xmlData = try? Data(contentsOf: url) else {
-            print("Failed to read GPX file at \(url)")
-            return nil
-        }
-        
-        var track = parseGPXData(xmlData)
-        
-        // If track has no name or empty name, use the filename without extension
-        if track?.name.isEmpty ?? true {
-            let filename = url.deletingPathExtension().lastPathComponent
-            track?.name = filename
-            print("Using filename as track name: \(filename)")
-        }
-        
-        return track
     }
     
-    static func parseGPXData(_ data: Data) -> RouteTrack? {
+    static func parseGPXFile(at url: URL) -> [RouteTrack] {
+        guard let xmlData = try? Data(contentsOf: url) else {
+            print("Failed to read GPX file at \(url)")
+            return []
+        }
+        
+        // Unnamed tracks fall back to the filename without extension
+        let filename = url.deletingPathExtension().lastPathComponent
+        return parseGPXData(xmlData).map { track in
+            var named = track
+            if named.name.isEmpty {
+                named.name = filename
+            }
+            return named
+        }
+    }
+    
+    static func parseGPXData(_ data: Data) -> [RouteTrack] {
         let parser = XMLParser(data: data)
         let delegate = GPXParserDelegate()
         parser.delegate = delegate
         
-        if parser.parse() {
-            // If there's no name in the GPX file, use the filename without extension
-            if delegate.track?.name.isEmpty ?? true {
-                // We can't set the name here since we don't have the filename
-                // The calling code will need to handle this
-                print("No name found in GPX data")
-            }
-            return delegate.track
-        } else {
+        guard parser.parse() else {
             print("Failed to parse GPX data")
-            return nil
+            return []
         }
+        return delegate.tracks
     }
 }
 
@@ -175,22 +154,10 @@ class GPXParserDelegate: NSObject, XMLParserDelegate {
     private var currentEle: Double?
     private var currentTime: Date?
     
-    // Store segments for the current track
+    // Segments of the track being parsed, and every finished track with points
     private var currentSegmentPoints: [CLLocation] = []
     private var segments: [RouteSegment] = []
-    
-    var track: RouteTrack? {
-        // Only return a track if we have at least one segment with points
-        if segments.isEmpty || segments.allSatisfy({ $0.locations.isEmpty }) {
-            return nil
-        }
-        return RouteTrack(
-            name: trackName,
-            type: trackType,
-            date: trackDate,
-            segments: segments
-        )
-    }
+    private(set) var tracks: [RouteTrack] = []
     
     func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String] = [:]) {
         currentElement = elementName
@@ -198,7 +165,8 @@ class GPXParserDelegate: NSObject, XMLParserDelegate {
         switch elementName {
         case "trk":
             isTrack = true
-            // Reset segments when starting a new track
+            // Each <trk> becomes its own RouteTrack
+            trackName = ""
             segments = []
             
         case "trkseg":
@@ -271,6 +239,10 @@ class GPXParserDelegate: NSObject, XMLParserDelegate {
             segments.append(segment)
             isTrackSegment = false
         } else if elementName == "trk" {
+            // Keep the track only if it carries at least one point
+            if segments.contains(where: { !$0.locations.isEmpty }) {
+                tracks.append(RouteTrack(name: trackName, type: trackType, date: trackDate, segments: segments))
+            }
             isTrack = false
         }
         

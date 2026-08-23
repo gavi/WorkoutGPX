@@ -186,6 +186,7 @@ struct ContentView: View {
                     NavigationLink(destination: SettingsView()) {
                         Image(systemName: "gear")
                     }
+                    .accessibilityIdentifier("settings-button")
                 }
                 ToolbarItem(placement: .primaryAction) {
                     Button(action: {
@@ -193,6 +194,7 @@ struct ContentView: View {
                     }) {
                         Image(systemName: "line.3.horizontal.decrease.circle\(showFilters ? ".fill" : "")")
                     }
+                    .accessibilityIdentifier("filters-button")
                     .disabled(isLoading || !healthStore.authorized)
                 }
             }
