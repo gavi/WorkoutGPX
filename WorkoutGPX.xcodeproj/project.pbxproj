@@ -340,6 +340,7 @@
 				DEVELOPMENT_TEAM = PHKS4YZMLE;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app needs access to your workout and route data to create GPX exports.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app does not modify your health data.";
@@ -378,6 +379,7 @@
 				DEVELOPMENT_TEAM = PHKS4YZMLE;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "This app needs access to your workout and route data to create GPX exports.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "This app does not modify your health data.";
