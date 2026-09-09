@@ -26,13 +26,14 @@ DEFAULT_OUT = os.path.expanduser("~/Library/Mobile Documents/com~apple~CloudDocs
 # title and subtitle instead of a caption. The App Store takes at most 10 per size.
 SCENES = [
     ("01-workouts", None),
+    ("09-select-all", "Select many, export once"),
     ("02-filters", "Filter by activity and date"),
     ("03-hike-effort", "See every climb and descent"),
     ("05b-run-scrub", "Scrub the elevation profile"),
     ("04-hike-gradient-satellite", "Color routes by elevation"),
     ("06-ride-satellite", "Satellite and hybrid maps"),
     ("08-settings", "Units, maps and sensor data"),
-    ("07-share", "Share GPX files anywhere"),
+    ("10-share-all", "One share sheet, every GPX"),
 ]
 
 HERO_TITLE = "WorkoutGPX"

@@ -83,8 +83,9 @@ ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 40, index=1).getlength
 
 ButterKit exports from the GUI (**Publish**) — there is no CLI. Export both size
 classes and upload in App Store Connect → the version → iPhone 6.9" / iPad 13".
-The App Store takes at most 10 screenshots per size; the share-sheet board is the
-first to drop if you want fewer.
+The App Store takes at most 10 screenshots per size; the package has nine boards
+(the multi-select board is second, the multi-file share sheet last). The single-file
+`07-share` scene is still captured but no longer on a board.
 
 The listing copy (description, promotional text, release notes) is in
 `listing-metadata.txt`.
