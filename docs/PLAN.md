@@ -1,6 +1,6 @@
 # WorkoutGPX — Product & Engineering Plan
 
-_Last updated: 2026-08-17 (items 1.1, 1.2, 1.6, 2.4, 2.7, 2.8 and 3.3 landed in the working tree; deployment target now iOS 16.0). Current shipping version: 1.3._
+_Last updated: 2026-09-09 (2.1 multi-select export landed for 1.5; earlier: 1.1, 1.2, 1.6, 2.4, 2.7, 2.8 and 3.3 on 2026-08-17). Deployment target is iOS 18.2 in the project. Current shipping version: 1.4._
 
 This document captures a first-principles view of what WorkoutGPX is, where the
 current implementation falls short of that, and a sequenced plan to close the gap.
@@ -128,7 +128,7 @@ Small, low-risk changes that fix things users currently can't see are wrong.
 
 | # | Task | Dimension | Notes / acceptance |
 |---|---|---|---|
-| 2.1 | Multi-select export | Friction | Edit mode in the list, "Select all" for the current filter, one share sheet with N `.gpx` URLs (option: single `.zip`). Progress UI for route fetching; skip-and-report workouts without routes. |
+| 2.1 | Multi-select export | Friction | **Done** (2026-09-09, ships in 1.5): Select in the list toolbar puts the `List` in edit mode with a `Set<UUID>` selection; Select All / Deselect All covers the current filter; a bottom bar shows the count and Export. `BulkExporter` fetches route and sensor data per workout sequentially with a progress card (cancelable), skips route-less workouts and reports them in an alert that still offers to share what did export. One share sheet with N `.gpx` URLs (`presentShareSheet`, also used by the detail view); the sheet's completion leaves edit mode only when the files actually went somewhere. No zip (see D3). |
 | 2.2 | Persist filters across launches | Friction | Store dates + selected types in `UserDefaults`; on launch apply the same "advance end date only if today" rule. Pair with 1.8 so a stale filter is never invisible. |
 | 2.3 | Period steppers | Friction | ‹ / › buttons that shift the current range by its own length (week/month/year); a year picker for jumping straight to e.g. 2021. |
 | 2.4 | All activity types | Completeness | **Done** (2026-08-17): all workouts are fetched; chips are built from the types present in the range (with counts), "All" = empty selection; names/icons cover the full `HKWorkoutActivityType` set. Workouts without a route are hidden by default with a visible "N without GPS hidden" note and a toggle to show them (see 2.7). |
@@ -158,7 +158,7 @@ This is the version that changes what the app is.
 |---|---|---|---|
 | **D1** (decided 2026-08-17) | Raise deployment target 15.6 → 16.x? | — | **Moved to iOS 16.0** to ship the Swift Charts elevation profile. Unlocks App Intents and `NavigationStack` for later phases. |
 | **D2** | Is auto-export in scope? | Yes (Phase 3) / keep the app deliberately manual | Changes the product's identity from "tool" to "infrastructure". Also raises support surface (background delivery reliability, folder permissions). |
-| **D3** | Bulk export packaging | N files in one share / single zip / both | Zip is friendlier for AirDrop and mail; N files is friendlier for "Save to Files". |
+| **D3** (decided 2026-09-09) | Bulk export packaging | — | **N files in one share sheet.** Save to Files, AirDrop and Mail all accept multiple items, and the consumer apps want `.gpx` files, not an archive. Revisit with a zip option only if users ask for it. |
 | **D4** | Accuracy threshold for point filtering | Fixed 50 m / configurable / off by default | Trade-off between clean tracks and "you dropped my points". Default should be conservative and visible. |
 | **D5** (decided 2026-08-17) | How to encode power in GPX | — | Both: Garmin `gpxpx:PowerExtension` (schema-valid) **and** bare `<power>` (what Strava/Zwift/RideWithGPS exchange; not schema-valid, so strict validators flag it). Revisit if a consumer chokes on the duplicate. |
 

@@ -16,6 +16,14 @@ struct ContentView: View {
     @State private var endDate = Date()
     @State private var isLoading = true
     @Environment(\.scenePhase) private var scenePhase
+    @EnvironmentObject var settings: SettingsModel
+    
+    // Multi-select export: the list enters edit mode, the user ticks workouts,
+    // and one share sheet carries every GPX file
+    @State private var editMode: EditMode = .inactive
+    @State private var selectedWorkoutIDs: Set<UUID> = []
+    @StateObject private var bulkExporter = BulkExporter()
+    @State private var skippedReport: BulkExportResult?
     
     // Workouts in the date range, before activity-type filtering
     private var workoutsInRange: [HKWorkout] {
@@ -59,6 +67,17 @@ struct ContentView: View {
                 if $0.count != $1.count { return $0.count > $1.count }
                 return workoutActivityTypeString($0.type) < workoutActivityTypeString($1.type)
             }
+    }
+    
+    private var isSelecting: Bool { editMode == .active }
+    
+    // Selected workouts that are still visible under the current filters
+    private var selectedWorkouts: [HKWorkout] {
+        filteredWorkouts.filter { selectedWorkoutIDs.contains($0.uuid) }
+    }
+    
+    private var allVisibleSelected: Bool {
+        !filteredWorkouts.isEmpty && selectedWorkouts.count == filteredWorkouts.count
     }
     
     var body: some View {
@@ -131,9 +150,11 @@ struct ContentView: View {
                         .padding(.horizontal)
                         
                         // Never hide data silently: say how many were left out and why
-                        Text(hiddenWithoutRouteCount > 0
-                             ? "\(filteredWorkouts.count) workouts · \(hiddenWithoutRouteCount) without GPS hidden"
-                             : "\(filteredWorkouts.count) workouts")
+                        Text(isSelecting
+                             ? "\(selectedWorkouts.count) of \(filteredWorkouts.count) selected"
+                             : hiddenWithoutRouteCount > 0
+                                ? "\(filteredWorkouts.count) workouts · \(hiddenWithoutRouteCount) without GPS hidden"
+                                : "\(filteredWorkouts.count) workouts")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -163,8 +184,8 @@ struct ContentView: View {
                         .padding()
                         .frame(maxHeight: .infinity)
                     } else {
-                        // Workout list
-                        List {
+                        // Workout list; in edit mode a tap ticks the row instead of opening it
+                        List(selection: $selectedWorkoutIDs) {
                             ForEach(filteredWorkouts, id: \.uuid) { workout in
                                 NavigationLink(destination: WorkoutDetailView(workout: workout, healthStore: healthStore)) {
                                     WorkoutRow(
@@ -172,8 +193,10 @@ struct ContentView: View {
                                         hasRoute: healthStore.workoutsWithRoutes.contains(workout.uuid)
                                     )
                                 }
+                                .tag(workout.uuid)
                             }
                         }
+                        .environment(\.editMode, $editMode)
                         .refreshable {
                             await refreshWorkouts()
                         }
@@ -183,20 +206,81 @@ struct ContentView: View {
             .navigationTitle("Workout GPX Exporter")
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    NavigationLink(destination: SettingsView()) {
-                        Image(systemName: "gear")
+                    if isSelecting {
+                        Button(allVisibleSelected ? "Deselect All" : "Select All") {
+                            toggleSelectAll()
+                        }
+                        .accessibilityIdentifier("select-all-button")
+                    } else {
+                        NavigationLink(destination: SettingsView()) {
+                            Image(systemName: "gear")
+                        }
+                        .accessibilityIdentifier("settings-button")
                     }
-                    .accessibilityIdentifier("settings-button")
                 }
-                ToolbarItem(placement: .primaryAction) {
-                    Button(action: {
-                        showFilters.toggle()
-                    }) {
-                        Image(systemName: "line.3.horizontal.decrease.circle\(showFilters ? ".fill" : "")")
+                ToolbarItemGroup(placement: .primaryAction) {
+                    if isSelecting {
+                        Button("Done") {
+                            finishSelecting()
+                        }
+                        .accessibilityIdentifier("done-selecting-button")
+                    } else {
+                        Button("Select") {
+                            startSelecting()
+                        }
+                        .accessibilityIdentifier("select-button")
+                        .disabled(isLoading || !healthStore.authorized || filteredWorkouts.isEmpty)
+                        
+                        Button(action: {
+                            showFilters.toggle()
+                        }) {
+                            Image(systemName: "line.3.horizontal.decrease.circle\(showFilters ? ".fill" : "")")
+                        }
+                        .accessibilityIdentifier("filters-button")
+                        .disabled(isLoading || !healthStore.authorized)
                     }
-                    .accessibilityIdentifier("filters-button")
-                    .disabled(isLoading || !healthStore.authorized)
                 }
+                if isSelecting {
+                    ToolbarItemGroup(placement: .bottomBar) {
+                        Spacer()
+                        // A text button: bottom-bar Labels collapse to their icon, and this one is the whole point
+                        Button(action: {
+                            Task { await exportSelected() }
+                        }) {
+                            Text(selectedWorkouts.count == 1 ? "Export 1 Workout" : "Export \(selectedWorkouts.count) Workouts")
+                                .fontWeight(.semibold)
+                                .padding(.horizontal, 8)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .accessibilityIdentifier("export-selected-button")
+                        .disabled(selectedWorkouts.isEmpty || bulkExporter.isRunning)
+                        Spacer()
+                    }
+                }
+            }
+            .overlay {
+                if bulkExporter.isRunning {
+                    BulkExportProgressView(exporter: bulkExporter)
+                }
+            }
+            .alert(
+                skippedReportTitle,
+                isPresented: Binding(
+                    get: { skippedReport != nil },
+                    set: { if !$0 { skippedReport = nil } }
+                ),
+                presenting: skippedReport
+            ) { result in
+                if !result.fileURLs.isEmpty {
+                    Button(result.fileURLs.count == 1 ? "Share 1 File" : "Share \(result.fileURLs.count) Files") {
+                        share(result.fileURLs)
+                    }
+                    Button("Cancel", role: .cancel) {}
+                } else {
+                    Button("OK", role: .cancel) {}
+                }
+            } message: { result in
+                Text(skippedReportMessage(for: result))
             }
         }
         .onChange(of: scenePhase) { newPhase in
@@ -223,6 +307,80 @@ struct ContentView: View {
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
+    }
+    
+    // MARK: - Multi-select export
+    
+    private func startSelecting() {
+        selectedWorkoutIDs = []
+        withAnimation { editMode = .active }
+    }
+    
+    private func finishSelecting() {
+        withAnimation { editMode = .inactive }
+        selectedWorkoutIDs = []
+    }
+    
+    private func toggleSelectAll() {
+        if allVisibleSelected {
+            selectedWorkoutIDs = []
+        } else {
+            selectedWorkoutIDs = Set(filteredWorkouts.map { $0.uuid })
+        }
+    }
+    
+    // Builds one GPX per selected workout, then opens a single share sheet with all of them.
+    // Workouts without a route are skipped and reported, never silently dropped.
+    @MainActor
+    private func exportSelected() async {
+        let workouts = selectedWorkouts
+        guard !workouts.isEmpty else { return }
+        
+        let options = GPXExportOptions(
+            useMetricSystem: settings.useMetricSystem,
+            includeSensorData: settings.includeSensorData
+        )
+        let result = await bulkExporter.export(workouts, using: healthStore, options: options)
+        
+        if result.wasCancelled {
+            return
+        }
+        if result.skipped.isEmpty {
+            share(result.fileURLs)
+        } else {
+            skippedReport = result
+        }
+    }
+    
+    private func share(_ urls: [URL]) {
+        guard !urls.isEmpty else { return }
+        presentShareSheet(items: urls) { finished in
+            // Leave edit mode once the files have gone somewhere; a dismissed sheet keeps the selection
+            if finished {
+                finishSelecting()
+            }
+        }
+    }
+    
+    private var skippedReportTitle: String {
+        guard let result = skippedReport else { return "" }
+        return result.fileURLs.isEmpty ? "Nothing to Export" : "Some Workouts Were Skipped"
+    }
+    
+    private func skippedReportMessage(for result: BulkExportResult) -> String {
+        let exported = result.fileURLs.count
+        let skipped = result.skipped.count
+        var lines: [String] = []
+        lines.append(exported == 0
+                     ? (skipped == 1 ? "The selected workout has no GPS data." : "None of the \(skipped) selected workouts has GPS data.")
+                     : "\(exported) of \(result.requested) exported. \(skipped) skipped:")
+        for item in result.skipped.prefix(5) {
+            lines.append("• \(workoutActivityTypeString(item.workout.workoutActivityType)), \(dateFormatter.string(from: item.workout.startDate)) — \(item.reason)")
+        }
+        if skipped > 5 {
+            lines.append("• and \(skipped - 5) more")
+        }
+        return lines.joined(separator: "\n")
     }
     
     @MainActor

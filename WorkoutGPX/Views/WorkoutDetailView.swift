@@ -199,35 +199,7 @@ struct WorkoutDetailView: View {
         }
     }
     
-    // Direct UIKit sharing method to avoid SwiftUI sheet issues
     private func shareFile(url: URL) {
-        // Get the current window scene
-        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let rootViewController = windowScene.windows.first?.rootViewController else {
-            return
-        }
-        
-        // Find the topmost presented view controller
-        var topController = rootViewController
-        while let presentedController = topController.presentedViewController {
-            topController = presentedController
-        }
-        
-        // Create and present the activity view controller
-        let activityViewController = UIActivityViewController(
-            activityItems: [url],
-            applicationActivities: nil
-        )
-        
-        // For iPad support
-        if let popoverController = activityViewController.popoverPresentationController {
-            popoverController.sourceView = topController.view
-            popoverController.sourceRect = CGRect(x: topController.view.bounds.midX,
-                                                 y: topController.view.bounds.midY,
-                                                 width: 0, height: 0)
-            popoverController.permittedArrowDirections = []
-        }
-        
-        topController.present(activityViewController, animated: true)
+        presentShareSheet(items: [url])
     }
 }

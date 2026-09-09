@@ -51,7 +51,9 @@ synthetic drag lifts.
 
 Scenes: `00-hero` (hike, no route-info card), `01-workouts`, `02-filters`,
 `03-hike-effort`, `04-hike-gradient-satellite`, `05-run-effort`, `05b-run-scrub`,
-`06-ride-satellite`, `07-share`, `08-settings`.
+`06-ride-satellite`, `07-share`, `08-settings`, `09-select-all` (every row ticked,
+bottom bar with Export), `10-share-all` (the share sheet with one GPX per workout).
+Add `TEST_RUNNER_DOC_SCENES=09-select-all,10-share-all` to capture only some scenes.
 
 ## 2. Build the ButterKit package
 

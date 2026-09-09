@@ -1,6 +1,11 @@
 WorkoutGPX — App Store listing copy (English, U.S.)
 ====================================================
 
+Version 1.5 — What's New
+------------------------
+• Export several workouts at once: tap Select, tick the workouts (or Select All for the current filter), and share every GPX file in one go
+• Workouts without GPS are skipped and listed, never silently dropped
+
 Version 1.4 — What's New
 ------------------------
 • Filters stay put after each export — no more resetting the end date when exporting a multi‑day trip

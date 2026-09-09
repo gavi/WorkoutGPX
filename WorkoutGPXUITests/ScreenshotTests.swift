@@ -94,9 +94,28 @@ final class ScreenshotTests: XCTestCase {
                 app.buttons["settings-button"].firstMatch.tap()
                 Thread.sleep(forTimeInterval: 1.0)
             },
+
+            // Multi-select: Select, then Select All, so every row is ticked and the
+            // bottom bar shows the count and the Export button
+            Scene(name: "09-select-all", arguments: []) { app in
+                self.selectAllWorkouts(app)
+                Thread.sleep(forTimeInterval: 1.0)
+            },
+
+            // Export the selection: one share sheet carrying every GPX file
+            Scene(name: "10-share-all", arguments: []) { app in
+                self.selectAllWorkouts(app)
+                app.buttons["export-selected-button"].firstMatch.tap()
+                // Route fetches, then the share sheet laying out its targets
+                Thread.sleep(forTimeInterval: 6.0)
+            },
         ]
 
-        for scene in scenes {
+        // DOC_SCENES=09-select-all,10-share-all captures a subset (TEST_RUNNER_DOC_SCENES from xcodebuild)
+        let wanted: Set<String>? = ProcessInfo.processInfo.environment["DOC_SCENES"]
+            .map { Set($0.split(separator: ",").map { String($0) }) }
+
+        for scene in scenes where wanted?.contains(scene.name) ?? true {
             let app = XCUIApplication()
             app.launchArguments = baseArguments + scene.arguments
             app.launch()
@@ -109,6 +128,17 @@ final class ScreenshotTests: XCTestCase {
             snap(app, name: scene.name)
             app.terminate()
         }
+    }
+
+    // Enters selection mode and ticks every workout under the current filter
+    @MainActor
+    private func selectAllWorkouts(_ app: XCUIApplication) {
+        app.buttons["select-button"].firstMatch.tap()
+        let selectAll = app.buttons["select-all-button"].firstMatch
+        XCTAssertTrue(selectAll.waitForExistence(timeout: 5), "select-all button never appeared")
+        selectAll.tap()
+        let export = app.buttons["export-selected-button"].firstMatch
+        XCTAssertTrue(export.waitForExistence(timeout: 5), "export button never appeared in the bottom bar")
     }
 
     // Opens the n-th row of the given activity and waits for its route to render

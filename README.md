@@ -6,6 +6,7 @@ WorkoutGPX is a Swift application that allows you to export your Apple Health wo
 
 - Export workouts from Apple HealthKit to GPX files
 - Filter workouts by type, date, and distance
+- Export several workouts at once: Select, tick, share every GPX in one go
 - Preview workout routes before exporting
 - Simple and intuitive user interface
 
