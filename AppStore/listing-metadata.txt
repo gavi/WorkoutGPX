@@ -36,6 +36,8 @@ KEY FEATURES
 
 • Every Activity Type: Running, walking, hiking, cycling, swimming, skiing, rowing, and any other workout with a GPS route. Workouts without location data are tucked away so the list shows only what you can export.
 
+• Export Many at Once: Tap Select, tick the workouts you want or Select All for the current filter, and share every GPX file in one go. Workouts without GPS are skipped and listed, never silently dropped.
+
 • Rich GPX Files: Each track point carries timestamp, coordinates, and elevation, plus heart rate, cadence, power, speed, and course using the standard Garmin extensions — so fitness platforms import your full effort, not just the line on the map.
 
 • Built‑in Route Viewer: See each route on the map, colored by effort, grade, or elevation, with peaks and valleys marked. Scrub the elevation profile to follow your progress point by point.
