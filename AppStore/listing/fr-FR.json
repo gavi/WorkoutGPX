@@ -1,0 +1,17 @@
+{
+  "locale": "fr-FR",
+  "app_info": {
+    "name": "WorkoutGPX",
+    "subtitle": "Vos séances Santé en GPX",
+    "privacyPolicyUrl": "https://objectgraph.com/privacy"
+  },
+  "version": {
+    "versionString": "1.5.1",
+    "description": "Exportez vos séances Apple Santé en fichiers GPX : chaque séance, chaque activité, avec les données de capteurs que vos autres apps attendent.\n\nWorkoutGPX se connecte directement à Apple Santé et transforme toute séance avec un tracé GPS en fichier GPX standard, à ouvrir dans Strava, Garmin Connect, Komoot, Google Earth ou n'importe quelle app de cartes. Analyser une course, partager un parcours vélo, sauvegarder des années de randonnées ou sortir vos données de votre montre : avec WorkoutGPX, c'est quelques touches.\n\nFONCTIONS\n\n• Tout votre historique : sans limite. Parcourez et exportez chaque séance qu'Apple Santé a enregistrée, aussi loin que remontent vos données.\n\n• Toutes les activités : course, marche, randonnée, vélo, natation, ski, aviron et toute autre séance avec un tracé GPS. Les séances sans position sont mises de côté pour que la liste ne montre que ce qui s'exporte.\n\n• Plusieurs à la fois : touchez Sélectionner, cochez les séances ou Tout sélectionner dans le filtre en cours, et partagez tous les fichiers GPX d'un coup. Les séances sans GPS sont ignorées et listées, jamais oubliées en silence.\n\n• Des fichiers GPX complets : chaque point porte l'horodatage, les coordonnées et l'altitude, plus la fréquence cardiaque, la cadence, la puissance, la vitesse et le cap avec les extensions Garmin standard, pour que les plateformes importent tout votre effort et pas seulement la ligne sur la carte.\n\n• Visionneuse intégrée : voyez chaque parcours sur la carte, coloré par effort, pente ou altitude, sommets et creux marqués. Parcourez le profil d'altitude pour suivre point par point.\n\n• Filtres malins : par activité et par période, avec des raccourcis. Les filtres restent en place pendant l'export, un voyage entier se sauvegarde vite.\n\n• Partage facile : AirDrop, Messages, Mail, Fichiers, stockage cloud ou toute app qui accepte des fichiers.\n\n• Vos unités, votre carte : métrique ou impérial, carte standard, satellite ou hybride, épaisseur de trait réglable, données de capteurs optionnelles dans l'export.\n\n• Confidentialité d'abord : WorkoutGPX ne se connecte jamais à Internet. Tout se passe sur votre appareil, et vos données de santé ne le quittent que quand vous partagez un fichier.\n\nOuvrez les fichiers dans GPX Explore sur Mac, iPhone et iPad : la pente en couleur, cardio et puissance tracés, temps en mouvement et intermédiaires.",
+    "keywords": "apple watch,strava,garmin,komoot,course,vélo,randonnée,cardio,parcours,carte,sauvegarde,fit,tcx",
+    "whatsNew": "• Exportez plusieurs séances à la fois : touchez Sélectionner, cochez les séances (ou Tout sélectionner dans le filtre) et partagez tous les fichiers GPX d'un coup\n• Les séances sans GPS sont ignorées et listées, jamais oubliées en silence\n• Un lien vers GPX Explore dans les réglages pour ouvrir les fichiers sur Mac\n• Demande une note après quelques exports",
+    "promotionalText": "Exportez tout votre historique Apple Santé en GPX : sans limite, toutes les activités, avec cardio, cadence et puissance. Tout sur l'appareil, rien ne quitte votre iPhone.",
+    "supportUrl": "https://www.objectgraph.com/workoutgpx",
+    "marketingUrl": "https://www.objectgraph.com/workoutgpx"
+  }
+}

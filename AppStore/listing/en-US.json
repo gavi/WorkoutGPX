@@ -1,0 +1,18 @@
+{
+  "locale": "en-US",
+  "app_info": {
+    "name": "WorkoutGPX",
+    "subtitle": "Export Health Workouts as GPX",
+    "privacyPolicyUrl": "https://objectgraph.com/privacy/",
+    "privacyChoicesUrl": null
+  },
+  "version": {
+    "versionString": "1.5",
+    "description": "Export your Apple Health workouts as GPX files — every workout, every activity type, with the sensor data your other apps expect.\n\nWorkoutGPX connects directly to Apple Health and turns any GPS‑tracked workout into an industry‑standard GPX file you can open in Strava, Garmin Connect, Komoot, Google Earth, or any mapping app. Whether you want to analyze a run, share a cycling route, back up years of hikes, or move your data off your watch, WorkoutGPX makes it a few taps.\n\nKEY FEATURES\n\n• Your Complete History: No limits. Browse and export every workout Apple Health has recorded, going back as far as your data does.\n\n• Every Activity Type: Running, walking, hiking, cycling, swimming, skiing, rowing, and any other workout with a GPS route. Workouts without location data are tucked away so the list shows only what you can export.\n\n• Export Many at Once: Tap Select, tick the workouts you want or Select All for the current filter, and share every GPX file in one go. Workouts without GPS are skipped and listed, never silently dropped.\n\n• Rich GPX Files: Each track point carries timestamp, coordinates, and elevation, plus heart rate, cadence, power, speed, and course using the standard Garmin extensions — so fitness platforms import your full effort, not just the line on the map.\n\n• Built‑in Route Viewer: See each route on the map, colored by effort, grade, or elevation, with peaks and valleys marked. Scrub the elevation profile to follow your progress point by point.\n\n• Smart Filters: Narrow your workouts by activity type and date range with quick presets. Your filters stay in place while you export, so bulk‑exporting a trip is fast.\n\n• Effortless Sharing: Send GPX files via AirDrop, Messages, Mail, Files, cloud storage, or any app that accepts files.\n\n• Your Choice of Units and Map: Metric or imperial, standard, satellite, or hybrid maps, adjustable line width, and optional sensor data in exports.\n\n• Privacy First: WorkoutGPX never connects to the internet. All processing happens on your device, and your health data only leaves it when you choose to share a file.\n\nWorkoutGPX is for athletes tracking training, travelers documenting trips, and anyone who wants full control over their own workout data.",
+    "keywords": "apple watch,strava,garmin,komoot,running,cycling,hiking,heart rate,route,map,backup,fit,tcx",
+    "whatsNew": "• Export several workouts at once: tap Select, tick the workouts (or Select All for the current filter), and share every GPX file in one go\n• Workouts without GPS are skipped and listed, never silently dropped",
+    "promotionalText": "Export your full Apple Health workout history as GPX — no limits, every activity type, with heart rate, cadence and power. 100% on‑device, nothing leaves your phone.",
+    "supportUrl": "https://www.objectgraph.com/workoutgpx",
+    "marketingUrl": "https://www.objectgraph.com/workoutgpx"
+  }
+}

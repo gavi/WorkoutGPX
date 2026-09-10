@@ -9,7 +9,7 @@ struct ShareSheet: UIViewControllerRepresentable {
         
         // Prevent dismissal of activity view controller
         controller.completionWithItemsHandler = { (activityType, completed, returnedItems, error) in
-            // This ensures the sharing sheet stays visible until user completes their action
+            if completed { ReviewPrompt.goodMoment() }
         }
         
         return controller

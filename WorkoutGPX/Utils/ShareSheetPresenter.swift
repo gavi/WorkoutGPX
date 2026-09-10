@@ -21,6 +21,7 @@ func presentShareSheet(items: [Any], completion: ((Bool) -> Void)? = nil) {
     
     let activityViewController = UIActivityViewController(activityItems: items, applicationActivities: nil)
     activityViewController.completionWithItemsHandler = { _, finished, _, _ in
+        if finished { ReviewPrompt.goodMoment() }   // a file actually sent or saved is the moment to ask
         completion?(finished)
     }
     

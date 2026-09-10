@@ -80,6 +80,18 @@ struct SettingsView: View {
                     .font(.footnote)
                     .foregroundColor(.secondary)
             }
+
+            // The other half of the workflow: the files this app writes, opened on a big screen
+            Section(header: Text("Also from ObjectGraph")) {
+                Link(destination: URL(string: "https://apps.apple.com/app/gpxexplore-gpx-track-viewer/id6745435014?pt=objectgraph&ct=workoutgpx-settings")!) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("GPX Explore").font(.body)
+                        Text("Open your exports on Mac, iPhone and iPad: the climb in colour, heart rate and power charted, moving time and splits. Free.")
+                            .font(.footnote)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
         }
         .navigationTitle("Settings")
     }
