@@ -11,7 +11,7 @@
     "keywords": "apple watch,strava,garmin,komoot,course,vélo,randonnée,cardio,parcours,carte,sauvegarde,fit,tcx",
     "whatsNew": "• Exportez plusieurs séances à la fois : touchez Sélectionner, cochez les séances (ou Tout sélectionner dans le filtre) et partagez tous les fichiers GPX d'un coup\n• Les séances sans GPS sont ignorées et listées, jamais oubliées en silence\n• Un lien vers GPX Explore dans les réglages pour ouvrir les fichiers sur Mac\n• Demande une note après quelques exports",
     "promotionalText": "Exportez tout votre historique Apple Santé en GPX : sans limite, toutes les activités, avec cardio, cadence et puissance. Tout sur l'appareil, rien ne quitte l'iPhone.",
-    "supportUrl": "https://www.objectgraph.com/workoutgpx",
-    "marketingUrl": "https://www.objectgraph.com/workoutgpx"
+    "supportUrl": "https://objectgraph.com/workoutgpx",
+    "marketingUrl": "https://objectgraph.com/workoutgpx"
   }
 }

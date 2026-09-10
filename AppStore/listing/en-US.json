@@ -12,7 +12,7 @@
     "keywords": "apple watch,strava,garmin,komoot,running,cycling,hiking,heart rate,route,map,backup,fit,tcx",
     "whatsNew": "• Export several workouts at once: tap Select, tick the workouts (or Select All for the current filter), and share every GPX file in one go\n• Workouts without GPS are skipped and listed, never silently dropped",
     "promotionalText": "Export your full Apple Health workout history as GPX — no limits, every activity type, with heart rate, cadence and power. 100% on‑device, nothing leaves your phone.",
-    "supportUrl": "https://www.objectgraph.com/workoutgpx",
-    "marketingUrl": "https://www.objectgraph.com/workoutgpx"
+    "supportUrl": "https://objectgraph.com/workoutgpx",
+    "marketingUrl": "https://objectgraph.com/workoutgpx"
   }
 }

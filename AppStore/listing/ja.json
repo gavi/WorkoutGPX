@@ -11,7 +11,7 @@
     "keywords": "apple watch,strava,garmin,komoot,ランニング,サイクリング,ハイキング,心拍,ルート,地図,バックアップ,fit,tcx",
     "whatsNew": "• 複数のワークアウトをまとめて書き出し: 「選択」をタップしてチェックを付けるか（フィルタ内で「すべて選択」）、GPXファイルをまとめて共有\n• GPSのないワークアウトはスキップされ一覧に表示。黙って落とされることはありません\n• 設定にGPX Exploreへのリンク。ファイルをMacで開けます\n• 何度か書き出した後に評価をお願いします",
     "promotionalText": "ヘルスケアの全履歴をGPXで書き出し。上限なし、すべての種目、心拍・ケイデンス・パワー付き。処理はすべて端末内、iPhoneの外には何も出ません。",
-    "supportUrl": "https://www.objectgraph.com/workoutgpx",
-    "marketingUrl": "https://www.objectgraph.com/workoutgpx"
+    "supportUrl": "https://objectgraph.com/workoutgpx",
+    "marketingUrl": "https://objectgraph.com/workoutgpx"
   }
 }
