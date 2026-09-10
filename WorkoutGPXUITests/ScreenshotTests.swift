@@ -27,13 +27,16 @@ final class ScreenshotTests: XCTestCase {
 
     @MainActor
     func testCaptureStoreScenes() throws {
-        // Miles and the US locale match the storefront the listing is written for;
-        // every run starts from the same settings so captures are reproducible.
+        // UI_LANG (TEST_RUNNER_UI_LANG on the xcodebuild invocation) picks the language the app
+        // launches in; the locale and the units follow it, as they do in GPX Explore's shots.sh.
+        // Unset means English with miles and the US locale, the storefront the listing is
+        // written for. Every run starts from the same settings so captures are reproducible.
+        let language = Self.language
         let baseArguments = [
-            "-AppleLanguages", "(en)",
-            "-AppleLocale", "en_US",
+            "-AppleLanguages", "(\(language.code))",
+            "-AppleLocale", language.locale,
             "-reviewPromptDisabled", "YES",
-            "-useMetricSystem", "NO",
+            "-useMetricSystem", language.metric,
             "-includeSensorData", "YES",
             "-mapStyle", "Standard",
             "-elevationVisualizationMode", "Effort",
@@ -46,7 +49,7 @@ final class ScreenshotTests: XCTestCase {
         let scenes: [Scene] = [
             // Hero artboard: the tilted device shows the top of the screen, so let the map fill it
             Scene(name: "00-hero", arguments: ["-defaultShowRouteInfoOverlay", "NO"]) { app in
-                self.openWorkout(app, activity: "Hiking", index: 0)
+                self.openWorkout(app, activity: "hiking", index: 0)
             },
 
             Scene(name: "01-workouts", arguments: []) { _ in },
@@ -58,20 +61,20 @@ final class ScreenshotTests: XCTestCase {
 
             // The Blue Hills hike: the longest climb, so the elevation profile has shape
             Scene(name: "03-hike-effort", arguments: []) { app in
-                self.openWorkout(app, activity: "Hiking", index: 0)
+                self.openWorkout(app, activity: "hiking", index: 0)
             },
 
             Scene(name: "04-hike-gradient-satellite", arguments: ["-mapStyle", "Hybrid", "-elevationVisualizationMode", "Gradient"]) { app in
-                self.openWorkout(app, activity: "Hiking", index: 0)
+                self.openWorkout(app, activity: "hiking", index: 0)
             },
 
             Scene(name: "05-run-effort", arguments: []) { app in
-                self.openWorkout(app, activity: "Running", index: 0)
+                self.openWorkout(app, activity: "running", index: 0)
             },
 
             // Scrub the profile: the chart annotation and the map marker follow the finger
             Scene(name: "05b-run-scrub", arguments: ["-keepChartSelection"]) { app in
-                self.openWorkout(app, activity: "Running", index: 0)
+                self.openWorkout(app, activity: "running", index: 0)
                 let chart = app.otherElements["elevation-chart"].firstMatch
                 XCTAssertTrue(chart.waitForExistence(timeout: 5), "elevation chart not on screen")
                 let from = chart.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.5))
@@ -81,11 +84,11 @@ final class ScreenshotTests: XCTestCase {
             },
 
             Scene(name: "06-ride-satellite", arguments: ["-mapStyle", "Satellite"]) { app in
-                self.openWorkout(app, activity: "Cycling", index: 0)
+                self.openWorkout(app, activity: "cycling", index: 0)
             },
 
             Scene(name: "07-share", arguments: []) { app in
-                self.openWorkout(app, activity: "Hiking", index: 0)
+                self.openWorkout(app, activity: "hiking", index: 0)
                 app.buttons["export-button"].firstMatch.tap()
                 // The share sheet is a system overlay; give it time to lay out its targets
                 Thread.sleep(forTimeInterval: 3.0)
@@ -114,6 +117,7 @@ final class ScreenshotTests: XCTestCase {
 
         // DOC_SCENES=09-select-all,10-share-all captures a subset (TEST_RUNNER_DOC_SCENES from xcodebuild)
         let wanted: Set<String>? = ProcessInfo.processInfo.environment["DOC_SCENES"]
+            .flatMap { $0.isEmpty ? nil : $0 }
             .map { Set($0.split(separator: ",").map { String($0) }) }
 
         for scene in scenes where wanted?.contains(scene.name) ?? true {
@@ -142,10 +146,13 @@ final class ScreenshotTests: XCTestCase {
         XCTAssertTrue(export.waitForExistence(timeout: 5), "export button never appeared in the bottom bar")
     }
 
-    // Opens the n-th row of the given activity and waits for its route to render
+    // Opens the n-th row of the given activity and waits for its route to render. The activity
+    // is the unlocalized GPX type ("hiking", "running", "cycling") behind WorkoutRow's
+    // accessibility identifier, so the same scene works in every language.
     @MainActor
     private func openWorkout(_ app: XCUIApplication, activity: String, index: Int) {
-        let row = app.cells.containing(.staticText, identifier: activity).element(boundBy: index)
+        let identifier = "workout-row-\(activity)"
+        let row = app.cells.containing(.any, identifier: identifier).element(boundBy: index)
         XCTAssertTrue(row.waitForExistence(timeout: 10), "no \(activity) row #\(index) in the list")
         row.tap()
 
@@ -158,6 +165,27 @@ final class ScreenshotTests: XCTestCase {
             Thread.sleep(forTimeInterval: 0.25)
         }
         Thread.sleep(forTimeInterval: 4.0)
+    }
+
+    // The language the captures are taken in, with the locale and units that go with it.
+    // Captures land in AppStore/screenshots/<lang>/<platform>/ (the caller sets DOC_SHOTS);
+    // English keeps the flat AppStore/screenshots/<platform>/.
+    private struct Language {
+        let code: String
+        let locale: String
+        let metric: String
+    }
+
+    private static var language: Language {
+        let code = ProcessInfo.processInfo.environment["UI_LANG"].flatMap { $0.isEmpty ? nil : $0 } ?? "en"
+        switch code {
+        case "de": return Language(code: code, locale: "de_DE", metric: "YES")
+        case "fr": return Language(code: code, locale: "fr_FR", metric: "YES")
+        case "es": return Language(code: code, locale: "es_ES", metric: "YES")
+        case "ja": return Language(code: code, locale: "ja_JP", metric: "YES")
+        case "en": return Language(code: code, locale: "en_US", metric: "NO")
+        default: return Language(code: code, locale: "\(code)_\(code.uppercased())", metric: "YES")
+        }
     }
 
     @MainActor

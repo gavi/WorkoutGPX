@@ -4,8 +4,11 @@ How the store artboards get refreshed. Everything comes from **driving the real 
 in a simulator** — nothing is mocked up in a design tool.
 
 ```
-xcodebuild test (ScreenshotTests)  →  raw PNGs  →  make-butterkit.py  →  ButterKit  →  Publish  →  App Store Connect
+AppStore/shots.sh  →  xcodebuild test (ScreenshotTests)  →  raw PNGs  →  make-butterkit.py  →  ButterKit  →  Publish  →  App Store Connect
 ```
+
+Five languages: English is the source, German, French, Spanish and Japanese are
+language variants inside the **one** package (never one package per language).
 
 ## 0. Where the data comes from
 
@@ -19,6 +22,29 @@ a recent date and a plausible pace; three route-less entries exercise the
 Never put real workout exports in `Samples/`: the folder ships inside the app bundle.
 
 ## 1. Capture
+
+`AppStore/shots.sh` drives the whole thing — release Xcode, the two simulators,
+dark appearance, the 9:41 status bar, build and test:
+
+```sh
+AppStore/shots.sh                     # both platforms, English → screenshots/<platform>/
+AppStore/shots.sh iphone              # one platform
+UI_LANG=de AppStore/shots.sh          # the German app       → screenshots/de/<platform>/
+SCENES=09-select-all,10-share-all AppStore/shots.sh iphone
+```
+
+`UI_LANG` (`de`, `fr`, `es`, `ja`) reaches the test as `TEST_RUNNER_UI_LANG`; the
+locale and the units follow the language (metric everywhere but English), and the
+captures land in `screenshots/<lang>/<platform>/`. Recapture **English too**
+whenever the languages are recaptured: base artboards and their variants have to
+come from the same build and the same day, or the boards disagree about the app's
+toolbar and the demo dates.
+
+Scenes must never look an element up by text a translation changes: rows are found
+through `WorkoutRow`'s `workout-row-<gpx activity>` identifier, buttons through
+theirs.
+
+The rest, by hand, is what the script does:
 
 `WorkoutGPXUITests/ScreenshotTests` walks the scenes and writes PNGs straight to
 the directory in `TEST_RUNNER_DOC_SHOTS`; without that variable it skips, so a
@@ -68,15 +94,24 @@ with title + subtitle, the rest with a caption. Captions, scene order, backgroun
 (`preset-bg-5`, the dark contour map) and device geometry live in the script — change
 them there, not in ButterKit, or the next regeneration discards the edits.
 
+Every artboard also gets a **language variant** per language whose captures exist in
+`screenshots/<lang>/` (`parentID` + `variation`, the translated caption in
+`translatedString`, that language's screenshot on the device). ButterKit lists them
+in its Localizations panel and uploads each to its App Store locale. `LANGUAGES` and
+`CAPTIONS` in the script hold the copy; the hero title stays "WorkoutGPX" in every
+language. A language with no captures is skipped with a note.
+
 **Quit ButterKit before regenerating**: it caches the document and assets while the
 package is open.
 
 iPhone captions are 40 pt and must stay under ~565 px wide or they wrap off the
-bottom edge; measure before changing copy:
+bottom edge; measure before changing copy, translations included (German and French
+run long, and Japanese needs a CJK face to measure at all):
 
 ```python
 from PIL import ImageFont
 ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 40, index=1).getlength("New caption")
+ImageFont.truetype("/System/Library/Fonts/Hiragino Sans GB.ttc", 40, index=0).getlength("日本語の字幕")
 ```
 
 ## 3. Export and upload

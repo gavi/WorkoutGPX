@@ -45,5 +45,8 @@ struct WorkoutRow: View {
             }
         }
         .padding(.vertical, 5)
+        // Stable, unlocalized handle for the screenshot tests: the row's visible title is the
+        // translated activity name, so UI tests cannot find a row by what it reads.
+        .accessibilityIdentifier("workout-row-\(gpxActivityTypeString(workout.workoutActivityType))")
     }
 }
