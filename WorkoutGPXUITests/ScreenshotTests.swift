@@ -32,6 +32,7 @@ final class ScreenshotTests: XCTestCase {
         let baseArguments = [
             "-AppleLanguages", "(en)",
             "-AppleLocale", "en_US",
+            "-reviewPromptDisabled", "YES",
             "-useMetricSystem", "NO",
             "-includeSensorData", "YES",
             "-mapStyle", "Standard",

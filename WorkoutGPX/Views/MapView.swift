@@ -1,5 +1,15 @@
 import SwiftUI
 import MapKit
+
+// Titles of the route markers. The title doubles as the marker's identity in the annotation
+// list (the filter and the view factory compare it), so every site uses these constants and
+// never a literal; the user sees them in the callouts, so they are localized.
+enum MarkerTitle {
+    static let start = String(localized: "Start")
+    static let end = String(localized: "End")
+    static let peak = String(localized: "Peak")
+    static let valley = String(localized: "Valley")
+}
 import CoreLocation
 import UIKit
 
@@ -682,7 +692,7 @@ struct MapView: UIViewRepresentable {
         // Markers only need rebuilding when the route itself changes
         if routeChanged {
             let existingMarkerAnnotations = mapView.annotations.filter {
-                $0.title == "Start" || $0.title == "End" || $0.title == "Peak" || $0.title == "Valley"
+                $0.title == MarkerTitle.start || $0.title == MarkerTitle.end || $0.title == MarkerTitle.peak || $0.title == MarkerTitle.valley
             }
             mapView.removeAnnotations(existingMarkerAnnotations)
             if !allLocations.isEmpty {
@@ -787,11 +797,11 @@ struct MapView: UIViewRepresentable {
         
         let startPoint = MKPointAnnotation()
         startPoint.coordinate = firstLocation.coordinate
-        startPoint.title = "Start"
+        startPoint.title = MarkerTitle.start
         
         let endPoint = MKPointAnnotation()
         endPoint.coordinate = lastLocation.coordinate
-        endPoint.title = "End"
+        endPoint.title = MarkerTitle.end
         
         mapView.addAnnotations([startPoint, endPoint])
     }
@@ -835,7 +845,7 @@ struct MapView: UIViewRepresentable {
         for point in significantPoints {
             let annotation = MKPointAnnotation()
             annotation.coordinate = routeLocations[point.index].coordinate
-            annotation.title = point.isMax ? "Peak" : "Valley"
+            annotation.title = point.isMax ? MarkerTitle.peak : MarkerTitle.valley
             annotation.subtitle = "\(Int(round(point.elevation)))m"
             mapView.addAnnotation(annotation)
         }
@@ -951,18 +961,18 @@ struct MapView: UIViewRepresentable {
                 return markerView
             }
             
-            switch annotation.title ?? nil {
-            case "Start":
+            switch (annotation.title ?? nil) ?? "" {
+            case MarkerTitle.start:
                 markerView.markerTintColor = .green
                 markerView.glyphImage = UIImage(systemName: "flag.fill")
-            case "End":
+            case MarkerTitle.end:
                 markerView.markerTintColor = .red
                 markerView.glyphImage = UIImage(systemName: "flag.checkered")
-            case "Peak":
+            case MarkerTitle.peak:
                 markerView.markerTintColor = .orange
                 markerView.glyphImage = UIImage(systemName: "arrow.up")
                 markerView.displayPriority = .defaultLow
-            case "Valley":
+            case MarkerTitle.valley:
                 markerView.markerTintColor = .blue
                 markerView.glyphImage = UIImage(systemName: "arrow.down")
                 markerView.displayPriority = .defaultLow

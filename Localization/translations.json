@@ -1,211 +1,1154 @@
 {
-  "": {"de": "", "fr": "", "es": "", "ja": ""},
-  "%@ · %@": {"de": "%@ · %@", "fr": "%@ · %@", "es": "%@ · %@", "ja": "%@ · %@"},
-  "%lld": {"de": "%lld", "fr": "%lld", "es": "%lld", "ja": "%lld"},
-  "%lld %@": {"de": "%lld %@", "fr": "%lld %@", "es": "%lld %@", "ja": "%lld %@"},
+  "": {
+    "de": "",
+    "fr": "",
+    "es": "",
+    "ja": ""
+  },
+  "%@ · %@": {
+    "de": "%@ · %@",
+    "fr": "%@ · %@",
+    "es": "%@ · %@",
+    "ja": "%@ · %@"
+  },
+  "%lld": {
+    "de": "%lld",
+    "fr": "%lld",
+    "es": "%lld",
+    "ja": "%lld"
+  },
+  "%lld %@": {
+    "de": "%lld %@",
+    "fr": "%lld %@",
+    "es": "%lld %@",
+    "ja": "%lld %@"
+  },
   "%lld data points in %lld segments": {
-    "en": {"one": "%lld data points in %lld segment", "other": "%lld data points in %lld segments"},
-    "de": {"one": "%lld Datenpunkte in %lld Segment", "other": "%lld Datenpunkte in %lld Segmenten"},
-    "fr": {"one": "%lld points dans %lld segment", "other": "%lld points dans %lld segments"},
-    "es": {"one": "%lld puntos en %lld segmento", "other": "%lld puntos en %lld segmentos"},
-    "ja": {"other": "%lldセグメントに%lld点"}
+    "en": {
+      "one": "%lld data points in %lld segment",
+      "other": "%lld data points in %lld segments"
+    },
+    "de": {
+      "one": "%lld Datenpunkte in %lld Segment",
+      "other": "%lld Datenpunkte in %lld Segmenten"
+    },
+    "fr": {
+      "one": "%lld points dans %lld segment",
+      "other": "%lld points dans %lld segments"
+    },
+    "es": {
+      "one": "%lld puntos en %lld segmento",
+      "other": "%lld puntos en %lld segmentos"
+    },
+    "ja": {
+      "other": "%lldセグメントに%lld点"
+    }
   },
   "%lld hidden in this range": {
-    "en": {"one": "%lld hidden in this range", "other": "%lld hidden in this range"},
-    "de": {"one": "%lld in diesem Zeitraum ausgeblendet", "other": "%lld in diesem Zeitraum ausgeblendet"},
-    "fr": {"one": "%lld masquée sur cette période", "other": "%lld masquées sur cette période"},
-    "es": {"one": "%lld oculto en este periodo", "other": "%lld ocultos en este periodo"},
-    "ja": {"other": "この期間に%lld件を非表示"}
+    "en": {
+      "one": "%lld hidden in this range",
+      "other": "%lld hidden in this range"
+    },
+    "de": {
+      "one": "%lld in diesem Zeitraum ausgeblendet",
+      "other": "%lld in diesem Zeitraum ausgeblendet"
+    },
+    "fr": {
+      "one": "%lld masquée sur cette période",
+      "other": "%lld masquées sur cette période"
+    },
+    "es": {
+      "one": "%lld oculto en este periodo",
+      "other": "%lld ocultos en este periodo"
+    },
+    "ja": {
+      "other": "この期間に%lld件を非表示"
+    }
   },
-  "%lld of %lld selected": {"de": "%lld von %lld ausgewählt", "fr": "%lld sur %lld sélectionnées", "es": "%lld de %lld seleccionados", "ja": "%lld / %lld 件を選択"},
+  "%lld of %lld selected": {
+    "de": "%lld von %lld ausgewählt",
+    "fr": "%lld sur %lld sélectionnées",
+    "es": "%lld de %lld seleccionados",
+    "ja": "%lld / %lld 件を選択"
+  },
   "%lld workouts": {
-    "en": {"one": "%lld workout", "other": "%lld workouts"},
-    "de": {"one": "%lld Workout", "other": "%lld Workouts"},
-    "fr": {"one": "%lld séance", "other": "%lld séances"},
-    "es": {"one": "%lld entrenamiento", "other": "%lld entrenamientos"},
-    "ja": {"other": "%lld件のワークアウト"}
+    "en": {
+      "one": "%lld workout",
+      "other": "%lld workouts"
+    },
+    "de": {
+      "one": "%lld Workout",
+      "other": "%lld Workouts"
+    },
+    "fr": {
+      "one": "%lld séance",
+      "other": "%lld séances"
+    },
+    "es": {
+      "one": "%lld entrenamiento",
+      "other": "%lld entrenamientos"
+    },
+    "ja": {
+      "other": "%lld件のワークアウト"
+    }
   },
   "%lld workouts · %lld without GPS hidden": {
-    "en": {"one": "%lld workout · %lld without GPS hidden", "other": "%lld workouts · %lld without GPS hidden"},
-    "de": {"one": "%lld Workout · %lld ohne GPS ausgeblendet", "other": "%lld Workouts · %lld ohne GPS ausgeblendet"},
-    "fr": {"one": "%lld séance · %lld sans GPS masquées", "other": "%lld séances · %lld sans GPS masquées"},
-    "es": {"one": "%lld entrenamiento · %lld sin GPS ocultos", "other": "%lld entrenamientos · %lld sin GPS ocultos"},
-    "ja": {"other": "%lld件のワークアウト · GPSなしの%lld件を非表示"}
+    "en": {
+      "one": "%lld workout · %lld without GPS hidden",
+      "other": "%lld workouts · %lld without GPS hidden"
+    },
+    "de": {
+      "one": "%lld Workout · %lld ohne GPS ausgeblendet",
+      "other": "%lld Workouts · %lld ohne GPS ausgeblendet"
+    },
+    "fr": {
+      "one": "%lld séance · %lld sans GPS masquées",
+      "other": "%lld séances · %lld sans GPS masquées"
+    },
+    "es": {
+      "one": "%lld entrenamiento · %lld sin GPS ocultos",
+      "other": "%lld entrenamientos · %lld sin GPS ocultos"
+    },
+    "ja": {
+      "other": "%lld件のワークアウト · GPSなしの%lld件を非表示"
+    }
   },
-  "10": {"de": "10", "fr": "10", "es": "10", "ja": "10"},
-  "2": {"de": "2", "fr": "2", "es": "2", "ja": "2"},
-  "Adds heart rate, cadence and power from Health to each track point using the Garmin TrackPointExtension, which Strava, Garmin Connect and Komoot understand.": {"de": "Fügt jedem Trackpunkt Herzfrequenz, Trittfrequenz und Leistung aus Health hinzu, in der Garmin TrackPointExtension, die Strava, Garmin Connect und Komoot verstehen.", "fr": "Ajoute à chaque point la fréquence cardiaque, la cadence et la puissance de Santé, dans l'extension Garmin TrackPointExtension que Strava, Garmin Connect et Komoot comprennent.", "es": "Añade a cada punto el pulso, la cadencia y la potencia de Salud con la extensión Garmin TrackPointExtension, que Strava, Garmin Connect y Komoot entienden.", "ja": "ヘルスケアの心拍数、ケイデンス、パワーを各トラックポイントに追加します。Strava、Garmin Connect、Komootが読めるGarmin TrackPointExtension形式です。"},
-  "All": {"de": "Alle", "fr": "Toutes", "es": "Todos", "ja": "すべて"},
-  "All processing happens on this device. WorkoutGPX reads Health data only to build the files you export and never connects to the network.": {"de": "Alles passiert auf diesem Gerät. WorkoutGPX liest Health-Daten nur, um die Dateien zu erstellen, die du exportierst, und verbindet sich nie mit dem Netz.", "fr": "Tout se passe sur cet appareil. WorkoutGPX lit les données Santé uniquement pour créer les fichiers que vous exportez et ne se connecte jamais au réseau.", "es": "Todo ocurre en este dispositivo. WorkoutGPX lee los datos de Salud solo para crear los archivos que exportas y nunca se conecta a la red.", "ja": "処理はすべてこの端末内で行われます。WorkoutGPXは書き出すファイルを作るためだけにヘルスケアのデータを読み、ネットワークには接続しません。"},
-  "Also from ObjectGraph": {"de": "Auch von ObjectGraph", "fr": "Aussi par ObjectGraph", "es": "También de ObjectGraph", "ja": "ObjectGraphのほかのアプリ"},
-  "American Football": {"de": "American Football", "fr": "Football américain", "es": "Fútbol americano", "ja": "アメリカンフットボール"},
-  "Apply Filters": {"de": "Filter anwenden", "fr": "Appliquer les filtres", "es": "Aplicar filtros", "ja": "フィルタを適用"},
-  "Archery": {"de": "Bogenschießen", "fr": "Tir à l'arc", "es": "Tiro con arco", "ja": "アーチェリー"},
-  "Australian Football": {"de": "Australian Football", "fr": "Football australien", "es": "Fútbol australiano", "ja": "オーストラリアンフットボール"},
-  "Badminton": {"de": "Badminton", "fr": "Badminton", "es": "Bádminton", "ja": "バドミントン"},
-  "Barre": {"de": "Barre", "fr": "Barre", "es": "Barre", "ja": "バー"},
-  "Baseball": {"de": "Baseball", "fr": "Baseball", "es": "Béisbol", "ja": "野球"},
-  "Basketball": {"de": "Basketball", "fr": "Basketball", "es": "Baloncesto", "ja": "バスケットボール"},
-  "Bowling": {"de": "Bowling", "fr": "Bowling", "es": "Bolos", "ja": "ボウリング"},
-  "Boxing": {"de": "Boxen", "fr": "Boxe", "es": "Boxeo", "ja": "ボクシング"},
-  "Cancel": {"de": "Abbrechen", "fr": "Annuler", "es": "Cancelar", "ja": "キャンセル"},
-  "Cardio Dance": {"de": "Cardio-Tanz", "fr": "Danse cardio", "es": "Baile cardio", "ja": "カーディオダンス"},
-  "Chart Detail": {"de": "Diagrammdetail", "fr": "Détail du graphique", "es": "Detalle de la gráfica", "ja": "グラフの詳細度"},
-  "Chart Detail: %@": {"de": "Diagrammdetail: %@", "fr": "Détail du graphique : %@", "es": "Detalle de la gráfica: %@", "ja": "グラフの詳細度: %@"},
-  "Check Health permissions": {"de": "Health-Berechtigungen prüfen", "fr": "Vérifier les autorisations Santé", "es": "Revisar los permisos de Salud", "ja": "ヘルスケアのアクセス権を確認"},
-  "Climb": {"de": "Anstieg", "fr": "Montée", "es": "Subida", "ja": "登り"},
-  "Climbing": {"de": "Klettern", "fr": "Escalade", "es": "Escalada", "ja": "クライミング"},
-  "Cooldown": {"de": "Cool-down", "fr": "Récupération", "es": "Enfriamiento", "ja": "クールダウン"},
-  "Core Training": {"de": "Rumpftraining", "fr": "Gainage", "es": "Core", "ja": "コアトレーニング"},
-  "Cricket": {"de": "Cricket", "fr": "Cricket", "es": "Críquet", "ja": "クリケット"},
-  "Cross Training": {"de": "Cross-Training", "fr": "Cross-training", "es": "Cross training", "ja": "クロストレーニング"},
-  "Cross-Country Skiing": {"de": "Skilanglauf", "fr": "Ski de fond", "es": "Esquí de fondo", "ja": "クロスカントリースキー"},
-  "Curling": {"de": "Curling", "fr": "Curling", "es": "Curling", "ja": "カーリング"},
-  "Cycling": {"de": "Radfahren", "fr": "Vélo", "es": "Ciclismo", "ja": "サイクリング"},
-  "Dance": {"de": "Tanzen", "fr": "Danse", "es": "Baile", "ja": "ダンス"},
-  "Date Range": {"de": "Zeitraum", "fr": "Période", "es": "Periodo", "ja": "期間"},
-  "Descent": {"de": "Abstieg", "fr": "Descente", "es": "Bajada", "ja": "下り"},
-  "Deselect All": {"de": "Alle abwählen", "fr": "Tout désélectionner", "es": "Deseleccionar todo", "ja": "すべて選択解除"},
-  "Disc Sports": {"de": "Disc-Sport", "fr": "Sports de disque", "es": "Deportes de disco", "ja": "ディスクスポーツ"},
-  "Distance": {"de": "Distanz", "fr": "Distance", "es": "Distancia", "ja": "距離"},
-  "Done": {"de": "Fertig", "fr": "OK", "es": "OK", "ja": "完了"},
-  "Downhill Skiing": {"de": "Ski alpin", "fr": "Ski alpin", "es": "Esquí alpino", "ja": "アルペンスキー"},
-  "Elevation": {"de": "Höhe", "fr": "Altitude", "es": "Altitud", "ja": "標高"},
-  "Elevation Profile": {"de": "Höhenprofil", "fr": "Profil d'altitude", "es": "Perfil de altitud", "ja": "標高プロファイル"},
-  "Elliptical": {"de": "Crosstrainer", "fr": "Elliptique", "es": "Elíptica", "ja": "エリプティカル"},
-  "End Date": {"de": "Enddatum", "fr": "Date de fin", "es": "Fecha final", "ja": "終了日"},
-  "Ended: %@ %@": {"de": "Ende: %@ %@", "fr": "Fin : %@ %@", "es": "Fin: %@ %@", "ja": "終了: %@ %@"},
-  "Equestrian": {"de": "Reiten", "fr": "Équitation", "es": "Equitación", "ja": "乗馬"},
-  "Error: %@": {"de": "Fehler: %@", "fr": "Erreur : %@", "es": "Error: %@", "ja": "エラー: %@"},
+  "10": {
+    "de": "10",
+    "fr": "10",
+    "es": "10",
+    "ja": "10"
+  },
+  "2": {
+    "de": "2",
+    "fr": "2",
+    "es": "2",
+    "ja": "2"
+  },
+  "Adds heart rate, cadence and power from Health to each track point using the Garmin TrackPointExtension, which Strava, Garmin Connect and Komoot understand.": {
+    "de": "Fügt jedem Trackpunkt Herzfrequenz, Trittfrequenz und Leistung aus Health hinzu, in der Garmin TrackPointExtension, die Strava, Garmin Connect und Komoot verstehen.",
+    "fr": "Ajoute à chaque point la fréquence cardiaque, la cadence et la puissance de Santé, dans l'extension Garmin TrackPointExtension que Strava, Garmin Connect et Komoot comprennent.",
+    "es": "Añade a cada punto el pulso, la cadencia y la potencia de Salud con la extensión Garmin TrackPointExtension, que Strava, Garmin Connect y Komoot entienden.",
+    "ja": "ヘルスケアの心拍数、ケイデンス、パワーを各トラックポイントに追加します。Strava、Garmin Connect、Komootが読めるGarmin TrackPointExtension形式です。"
+  },
+  "All": {
+    "de": "Alle",
+    "fr": "Toutes",
+    "es": "Todos",
+    "ja": "すべて"
+  },
+  "All processing happens on this device. WorkoutGPX reads Health data only to build the files you export and never connects to the network.": {
+    "de": "Alles passiert auf diesem Gerät. WorkoutGPX liest Health-Daten nur, um die Dateien zu erstellen, die du exportierst, und verbindet sich nie mit dem Netz.",
+    "fr": "Tout se passe sur cet appareil. WorkoutGPX lit les données Santé uniquement pour créer les fichiers que vous exportez et ne se connecte jamais au réseau.",
+    "es": "Todo ocurre en este dispositivo. WorkoutGPX lee los datos de Salud solo para crear los archivos que exportas y nunca se conecta a la red.",
+    "ja": "処理はすべてこの端末内で行われます。WorkoutGPXは書き出すファイルを作るためだけにヘルスケアのデータを読み、ネットワークには接続しません。"
+  },
+  "Also from ObjectGraph": {
+    "de": "Auch von ObjectGraph",
+    "fr": "Aussi par ObjectGraph",
+    "es": "También de ObjectGraph",
+    "ja": "ObjectGraphのほかのアプリ"
+  },
+  "American Football": {
+    "de": "American Football",
+    "fr": "Football américain",
+    "es": "Fútbol americano",
+    "ja": "アメリカンフットボール"
+  },
+  "Apply Filters": {
+    "de": "Filter anwenden",
+    "fr": "Appliquer les filtres",
+    "es": "Aplicar filtros",
+    "ja": "フィルタを適用"
+  },
+  "Archery": {
+    "de": "Bogenschießen",
+    "fr": "Tir à l'arc",
+    "es": "Tiro con arco",
+    "ja": "アーチェリー"
+  },
+  "Australian Football": {
+    "de": "Australian Football",
+    "fr": "Football australien",
+    "es": "Fútbol australiano",
+    "ja": "オーストラリアンフットボール"
+  },
+  "Badminton": {
+    "de": "Badminton",
+    "fr": "Badminton",
+    "es": "Bádminton",
+    "ja": "バドミントン"
+  },
+  "Barre": {
+    "de": "Barre",
+    "fr": "Barre",
+    "es": "Barre",
+    "ja": "バー"
+  },
+  "Baseball": {
+    "de": "Baseball",
+    "fr": "Baseball",
+    "es": "Béisbol",
+    "ja": "野球"
+  },
+  "Basketball": {
+    "de": "Basketball",
+    "fr": "Basketball",
+    "es": "Baloncesto",
+    "ja": "バスケットボール"
+  },
+  "Bowling": {
+    "de": "Bowling",
+    "fr": "Bowling",
+    "es": "Bolos",
+    "ja": "ボウリング"
+  },
+  "Boxing": {
+    "de": "Boxen",
+    "fr": "Boxe",
+    "es": "Boxeo",
+    "ja": "ボクシング"
+  },
+  "Cancel": {
+    "de": "Abbrechen",
+    "fr": "Annuler",
+    "es": "Cancelar",
+    "ja": "キャンセル"
+  },
+  "Cardio Dance": {
+    "de": "Cardio-Tanz",
+    "fr": "Danse cardio",
+    "es": "Baile cardio",
+    "ja": "カーディオダンス"
+  },
+  "Chart Detail": {
+    "de": "Diagrammdetail",
+    "fr": "Détail du graphique",
+    "es": "Detalle de la gráfica",
+    "ja": "グラフの詳細度"
+  },
+  "Chart Detail: %@": {
+    "de": "Diagrammdetail: %@",
+    "fr": "Détail du graphique : %@",
+    "es": "Detalle de la gráfica: %@",
+    "ja": "グラフの詳細度: %@"
+  },
+  "Check Health permissions": {
+    "de": "Health-Berechtigungen prüfen",
+    "fr": "Vérifier les autorisations Santé",
+    "es": "Revisar los permisos de Salud",
+    "ja": "ヘルスケアのアクセス権を確認"
+  },
+  "Climb": {
+    "de": "Anstieg",
+    "fr": "Montée",
+    "es": "Subida",
+    "ja": "登り"
+  },
+  "Climbing": {
+    "de": "Klettern",
+    "fr": "Escalade",
+    "es": "Escalada",
+    "ja": "クライミング"
+  },
+  "Cooldown": {
+    "de": "Cool-down",
+    "fr": "Récupération",
+    "es": "Enfriamiento",
+    "ja": "クールダウン"
+  },
+  "Core Training": {
+    "de": "Rumpftraining",
+    "fr": "Gainage",
+    "es": "Core",
+    "ja": "コアトレーニング"
+  },
+  "Cricket": {
+    "de": "Cricket",
+    "fr": "Cricket",
+    "es": "Críquet",
+    "ja": "クリケット"
+  },
+  "Cross Training": {
+    "de": "Cross-Training",
+    "fr": "Cross-training",
+    "es": "Cross training",
+    "ja": "クロストレーニング"
+  },
+  "Cross-Country Skiing": {
+    "de": "Skilanglauf",
+    "fr": "Ski de fond",
+    "es": "Esquí de fondo",
+    "ja": "クロスカントリースキー"
+  },
+  "Curling": {
+    "de": "Curling",
+    "fr": "Curling",
+    "es": "Curling",
+    "ja": "カーリング"
+  },
+  "Cycling": {
+    "de": "Radfahren",
+    "fr": "Vélo",
+    "es": "Ciclismo",
+    "ja": "サイクリング"
+  },
+  "Dance": {
+    "de": "Tanzen",
+    "fr": "Danse",
+    "es": "Baile",
+    "ja": "ダンス"
+  },
+  "Date Range": {
+    "de": "Zeitraum",
+    "fr": "Période",
+    "es": "Periodo",
+    "ja": "期間"
+  },
+  "Descent": {
+    "de": "Abstieg",
+    "fr": "Descente",
+    "es": "Bajada",
+    "ja": "下り"
+  },
+  "Deselect All": {
+    "de": "Alle abwählen",
+    "fr": "Tout désélectionner",
+    "es": "Deseleccionar todo",
+    "ja": "すべて選択解除"
+  },
+  "Disc Sports": {
+    "de": "Disc-Sport",
+    "fr": "Sports de disque",
+    "es": "Deportes de disco",
+    "ja": "ディスクスポーツ"
+  },
+  "Distance": {
+    "de": "Distanz",
+    "fr": "Distance",
+    "es": "Distancia",
+    "ja": "距離"
+  },
+  "Done": {
+    "de": "Fertig",
+    "fr": "OK",
+    "es": "OK",
+    "ja": "完了"
+  },
+  "Downhill Skiing": {
+    "de": "Ski alpin",
+    "fr": "Ski alpin",
+    "es": "Esquí alpino",
+    "ja": "アルペンスキー"
+  },
+  "Elevation": {
+    "de": "Höhe",
+    "fr": "Altitude",
+    "es": "Altitud",
+    "ja": "標高"
+  },
+  "Elevation Profile": {
+    "de": "Höhenprofil",
+    "fr": "Profil d'altitude",
+    "es": "Perfil de altitud",
+    "ja": "標高プロファイル"
+  },
+  "Elliptical": {
+    "de": "Crosstrainer",
+    "fr": "Elliptique",
+    "es": "Elíptica",
+    "ja": "エリプティカル"
+  },
+  "End Date": {
+    "de": "Enddatum",
+    "fr": "Date de fin",
+    "es": "Fecha final",
+    "ja": "終了日"
+  },
+  "Ended: %@ %@": {
+    "de": "Ende: %@ %@",
+    "fr": "Fin : %@ %@",
+    "es": "Fin: %@ %@",
+    "ja": "終了: %@ %@"
+  },
+  "Equestrian": {
+    "de": "Reiten",
+    "fr": "Équitation",
+    "es": "Equitación",
+    "ja": "乗馬"
+  },
+  "Error: %@": {
+    "de": "Fehler: %@",
+    "fr": "Erreur : %@",
+    "es": "Error: %@",
+    "ja": "エラー: %@"
+  },
   "Export %lld Workouts": {
-    "en": {"one": "Export %lld Workout", "other": "Export %lld Workouts"},
-    "de": {"one": "%lld Workout exportieren", "other": "%lld Workouts exportieren"},
-    "fr": {"one": "Exporter %lld séance", "other": "Exporter %lld séances"},
-    "es": {"one": "Exportar %lld entrenamiento", "other": "Exportar %lld entrenamientos"},
-    "ja": {"other": "%lld件を書き出す"}
+    "en": {
+      "one": "Export %lld Workout",
+      "other": "Export %lld Workouts"
+    },
+    "de": {
+      "one": "%lld Workout exportieren",
+      "other": "%lld Workouts exportieren"
+    },
+    "fr": {
+      "one": "Exporter %lld séance",
+      "other": "Exporter %lld séances"
+    },
+    "es": {
+      "one": "Exportar %lld entrenamiento",
+      "other": "Exportar %lld entrenamientos"
+    },
+    "ja": {
+      "other": "%lld件を書き出す"
+    }
   },
-  "Export 1 Workout": {"de": "1 Workout exportieren", "fr": "Exporter 1 séance", "es": "Exportar 1 entrenamiento", "ja": "1件を書き出す"},
-  "Exporting %lld of %lld": {"de": "Exportiere %lld von %lld", "fr": "Export %lld sur %lld", "es": "Exportando %lld de %lld", "ja": "書き出し中 %lld / %lld"},
-  "Fencing": {"de": "Fechten", "fr": "Escrime", "es": "Esgrima", "ja": "フェンシング"},
-  "Filter Workouts": {"de": "Workouts filtern", "fr": "Filtrer les séances", "es": "Filtrar entrenamientos", "ja": "ワークアウトを絞り込む"},
-  "Fishing": {"de": "Angeln", "fr": "Pêche", "es": "Pesca", "ja": "釣り"},
-  "Fit to Route": {"de": "Route einpassen", "fr": "Ajuster au parcours", "es": "Ajustar a la ruta", "ja": "ルート全体を表示"},
-  "Fitness Gaming": {"de": "Fitness-Gaming", "fr": "Jeu fitness", "es": "Fitness gaming", "ja": "フィットネスゲーム"},
-  "Flexibility": {"de": "Beweglichkeit", "fr": "Souplesse", "es": "Flexibilidad", "ja": "柔軟性"},
-  "Functional Strength": {"de": "Funktionelles Krafttraining", "fr": "Renforcement fonctionnel", "es": "Fuerza funcional", "ja": "ファンクショナルトレーニング"},
-  "GPX Explore": {"de": "GPX Explore", "fr": "GPX Explore", "es": "GPX Explore", "ja": "GPX Explore"},
-  "GPX Export": {"de": "GPX-Export", "fr": "Export GPX", "es": "Exportación GPX", "ja": "GPXの書き出し"},
-  "Gain: %@": {"de": "Bergauf: %@", "fr": "D+ : %@", "es": "Subida: %@", "ja": "獲得標高: %@"},
-  "Golf": {"de": "Golf", "fr": "Golf", "es": "Golf", "ja": "ゴルフ"},
-  "Gymnastics": {"de": "Turnen", "fr": "Gymnastique", "es": "Gimnasia", "ja": "体操"},
-  "HIIT": {"de": "HIIT", "fr": "HIIT", "es": "HIIT", "ja": "HIIT"},
-  "Hand Cycling": {"de": "Handbike", "fr": "Handbike", "es": "Handbike", "ja": "ハンドサイクリング"},
-  "Handball": {"de": "Handball", "fr": "Handball", "es": "Balonmano", "ja": "ハンドボール"},
-  "Health access not authorized": {"de": "Kein Zugriff auf Health", "fr": "Accès à Santé non autorisé", "es": "Acceso a Salud no autorizado", "ja": "ヘルスケアへのアクセスが許可されていません"},
-  "High": {"de": "Hoch", "fr": "Haut", "es": "Alto", "ja": "高"},
-  "Hiking": {"de": "Wandern", "fr": "Randonnée", "es": "Senderismo", "ja": "ハイキング"},
-  "Hockey": {"de": "Hockey", "fr": "Hockey", "es": "Hockey", "ja": "ホッケー"},
-  "Hunting": {"de": "Jagd", "fr": "Chasse", "es": "Caza", "ja": "狩猟"},
-  "Include Sensor Data": {"de": "Sensordaten einschließen", "fr": "Inclure les capteurs", "es": "Incluir datos de sensores", "ja": "センサーデータを含める"},
-  "Jump Rope": {"de": "Seilspringen", "fr": "Corde à sauter", "es": "Comba", "ja": "なわとび"},
-  "Kickboxing": {"de": "Kickboxen", "fr": "Kickboxing", "es": "Kickboxing", "ja": "キックボクシング"},
-  "Lacrosse": {"de": "Lacrosse", "fr": "Crosse", "es": "Lacrosse", "ja": "ラクロス"},
-  "Last 3 Months": {"de": "Letzte 3 Monate", "fr": "3 derniers mois", "es": "Últimos 3 meses", "ja": "過去3か月"},
-  "Last Month": {"de": "Letzter Monat", "fr": "Dernier mois", "es": "Último mes", "ja": "過去1か月"},
-  "Last Week": {"de": "Letzte Woche", "fr": "Dernière semaine", "es": "Última semana", "ja": "過去1週間"},
-  "Last Year": {"de": "Letztes Jahr", "fr": "Dernière année", "es": "Último año", "ja": "過去1年"},
-  "Loading route data...": {"de": "Routendaten werden geladen …", "fr": "Chargement du parcours…", "es": "Cargando la ruta…", "ja": "ルートを読み込み中…"},
-  "Loading workouts...": {"de": "Workouts werden geladen …", "fr": "Chargement des séances…", "es": "Cargando entrenamientos…", "ja": "ワークアウトを読み込み中…"},
-  "Low": {"de": "Niedrig", "fr": "Bas", "es": "Bajo", "ja": "低"},
-  "Map": {"de": "Karte", "fr": "Carte", "es": "Mapa", "ja": "地図"},
-  "Map Style": {"de": "Kartenstil", "fr": "Style de carte", "es": "Estilo de mapa", "ja": "地図の種類"},
-  "Martial Arts": {"de": "Kampfsport", "fr": "Arts martiaux", "es": "Artes marciales", "ja": "格闘技"},
-  "Max: %@": {"de": "Max: %@", "fr": "Max : %@", "es": "Máx: %@", "ja": "最高: %@"},
-  "Min: %@": {"de": "Min: %@", "fr": "Min : %@", "es": "Mín: %@", "ja": "最低: %@"},
-  "Mind & Body": {"de": "Körper & Geist", "fr": "Corps et esprit", "es": "Cuerpo y mente", "ja": "マインド＆ボディ"},
-  "Mixed Cardio": {"de": "Gemischtes Cardio", "fr": "Cardio mixte", "es": "Cardio mixto", "ja": "ミックスカーディオ"},
-  "More detail shows every point in the elevation chart; less is faster on very long routes.": {"de": "Mehr Detail zeigt jeden Punkt im Höhendiagramm; weniger ist bei sehr langen Routen schneller.", "fr": "Plus de détail affiche chaque point du graphique d'altitude ; moins est plus rapide sur les très longs parcours.", "es": "Más detalle muestra cada punto en la gráfica de altitud; menos es más rápido en rutas muy largas.", "ja": "詳細度を上げると標高グラフにすべての点を表示します。下げると長いルートで速くなります。"},
-  "No GPS data": {"de": "Keine GPS-Daten", "fr": "Pas de GPS", "es": "Sin datos GPS", "ja": "GPSデータなし"},
-  "No route data available": {"de": "Keine Routendaten vorhanden", "fr": "Aucun parcours disponible", "es": "No hay datos de ruta", "ja": "ルートデータがありません"},
-  "No workouts found": {"de": "Keine Workouts gefunden", "fr": "Aucune séance trouvée", "es": "No hay entrenamientos", "ja": "ワークアウトが見つかりません"},
-  "No workouts in this date range yet — adjust the dates and apply.": {"de": "Noch keine Workouts in diesem Zeitraum. Passe die Daten an und wende den Filter an.", "fr": "Aucune séance sur cette période. Modifiez les dates et appliquez.", "es": "No hay entrenamientos en este periodo. Ajusta las fechas y aplica.", "ja": "この期間にワークアウトはありません。日付を変えて適用してください。"},
-  "OK": {"de": "OK", "fr": "OK", "es": "OK", "ja": "OK"},
-  "Open Health Settings": {"de": "Health-Einstellungen öffnen", "fr": "Ouvrir les réglages Santé", "es": "Abrir ajustes de Salud", "ja": "ヘルスケアの設定を開く"},
-  "Open your exports on Mac, iPhone and iPad: the climb in colour, heart rate and power charted, moving time and splits. Free.": {"de": "Öffne deine Exporte auf Mac, iPhone und iPad: der Anstieg in Farbe, Herzfrequenz und Leistung im Diagramm, Bewegungszeit und Splits. Kostenlos.", "fr": "Ouvrez vos exports sur Mac, iPhone et iPad : la pente en couleur, cardio et puissance tracés, temps en mouvement et intermédiaires. Gratuit.", "es": "Abre tus exportaciones en Mac, iPhone y iPad: la pendiente en color, pulso y potencia en gráfica, tiempo en movimiento y parciales. Gratis.", "ja": "書き出したファイルをMac・iPhone・iPadで開けます。勾配は色で、心拍とパワーはグラフで、移動時間とスプリットも。無料。"},
-  "Other": {"de": "Sonstiges", "fr": "Autre", "es": "Otro", "ja": "その他"},
-  "Paddling": {"de": "Paddeln", "fr": "Pagaie", "es": "Remo con pala", "ja": "パドルスポーツ"},
-  "Pickleball": {"de": "Pickleball", "fr": "Pickleball", "es": "Pickleball", "ja": "ピックルボール"},
-  "Pilates": {"de": "Pilates", "fr": "Pilates", "es": "Pilates", "ja": "ピラティス"},
-  "Play": {"de": "Spielen", "fr": "Jeu", "es": "Juego", "ja": "遊び"},
-  "Privacy": {"de": "Datenschutz", "fr": "Confidentialité", "es": "Privacidad", "ja": "プライバシー"},
-  "Racquetball": {"de": "Racquetball", "fr": "Racquetball", "es": "Racquetball", "ja": "ラケットボール"},
-  "Recovery": {"de": "Erholung", "fr": "Récupération", "es": "Recuperación", "ja": "リカバリー"},
-  "Request Health Permission": {"de": "Health-Zugriff anfragen", "fr": "Demander l'accès à Santé", "es": "Pedir permiso de Salud", "ja": "ヘルスケアのアクセスを許可"},
-  "Route Coloring": {"de": "Routenfärbung", "fr": "Couleur du parcours", "es": "Color de la ruta", "ja": "ルートの色分け"},
-  "Route Info": {"de": "Routeninfo", "fr": "Infos parcours", "es": "Info de ruta", "ja": "ルート情報"},
-  "Rowing": {"de": "Rudern", "fr": "Aviron", "es": "Remo", "ja": "ローイング"},
-  "Rugby": {"de": "Rugby", "fr": "Rugby", "es": "Rugby", "ja": "ラグビー"},
-  "Running": {"de": "Laufen", "fr": "Course", "es": "Correr", "ja": "ランニング"},
-  "Sailing": {"de": "Segeln", "fr": "Voile", "es": "Vela", "ja": "セーリング"},
-  "Select": {"de": "Auswählen", "fr": "Sélectionner", "es": "Seleccionar", "ja": "選択"},
-  "Select All": {"de": "Alle auswählen", "fr": "Tout sélectionner", "es": "Seleccionar todo", "ja": "すべて選択"},
-  "Selected": {"de": "Ausgewählt", "fr": "Sélection", "es": "Seleccionado", "ja": "選択"},
-  "Settings": {"de": "Einstellungen", "fr": "Réglages", "es": "Ajustes", "ja": "設定"},
+  "Export 1 Workout": {
+    "de": "1 Workout exportieren",
+    "fr": "Exporter 1 séance",
+    "es": "Exportar 1 entrenamiento",
+    "ja": "1件を書き出す"
+  },
+  "Exporting %lld of %lld": {
+    "de": "Exportiere %lld von %lld",
+    "fr": "Export %lld sur %lld",
+    "es": "Exportando %lld de %lld",
+    "ja": "書き出し中 %lld / %lld"
+  },
+  "Fencing": {
+    "de": "Fechten",
+    "fr": "Escrime",
+    "es": "Esgrima",
+    "ja": "フェンシング"
+  },
+  "Filter Workouts": {
+    "de": "Workouts filtern",
+    "fr": "Filtrer les séances",
+    "es": "Filtrar entrenamientos",
+    "ja": "ワークアウトを絞り込む"
+  },
+  "Fishing": {
+    "de": "Angeln",
+    "fr": "Pêche",
+    "es": "Pesca",
+    "ja": "釣り"
+  },
+  "Fit to Route": {
+    "de": "Route einpassen",
+    "fr": "Ajuster au parcours",
+    "es": "Ajustar a la ruta",
+    "ja": "ルート全体を表示"
+  },
+  "Fitness Gaming": {
+    "de": "Fitness-Gaming",
+    "fr": "Jeu fitness",
+    "es": "Fitness gaming",
+    "ja": "フィットネスゲーム"
+  },
+  "Flexibility": {
+    "de": "Beweglichkeit",
+    "fr": "Souplesse",
+    "es": "Flexibilidad",
+    "ja": "柔軟性"
+  },
+  "Functional Strength": {
+    "de": "Funktionelles Krafttraining",
+    "fr": "Renforcement fonctionnel",
+    "es": "Fuerza funcional",
+    "ja": "ファンクショナルトレーニング"
+  },
+  "GPX Explore": {
+    "de": "GPX Explore",
+    "fr": "GPX Explore",
+    "es": "GPX Explore",
+    "ja": "GPX Explore"
+  },
+  "GPX Export": {
+    "de": "GPX-Export",
+    "fr": "Export GPX",
+    "es": "Exportación GPX",
+    "ja": "GPXの書き出し"
+  },
+  "Gain: %@": {
+    "de": "Bergauf: %@",
+    "fr": "D+ : %@",
+    "es": "Subida: %@",
+    "ja": "獲得標高: %@"
+  },
+  "Golf": {
+    "de": "Golf",
+    "fr": "Golf",
+    "es": "Golf",
+    "ja": "ゴルフ"
+  },
+  "Gymnastics": {
+    "de": "Turnen",
+    "fr": "Gymnastique",
+    "es": "Gimnasia",
+    "ja": "体操"
+  },
+  "HIIT": {
+    "de": "HIIT",
+    "fr": "HIIT",
+    "es": "HIIT",
+    "ja": "HIIT"
+  },
+  "Hand Cycling": {
+    "de": "Handbike",
+    "fr": "Handbike",
+    "es": "Handbike",
+    "ja": "ハンドサイクリング"
+  },
+  "Handball": {
+    "de": "Handball",
+    "fr": "Handball",
+    "es": "Balonmano",
+    "ja": "ハンドボール"
+  },
+  "Health access not authorized": {
+    "de": "Kein Zugriff auf Health",
+    "fr": "Accès à Santé non autorisé",
+    "es": "Acceso a Salud no autorizado",
+    "ja": "ヘルスケアへのアクセスが許可されていません"
+  },
+  "High": {
+    "de": "Hoch",
+    "fr": "Haut",
+    "es": "Alto",
+    "ja": "高"
+  },
+  "Hiking": {
+    "de": "Wandern",
+    "fr": "Randonnée",
+    "es": "Senderismo",
+    "ja": "ハイキング"
+  },
+  "Hockey": {
+    "de": "Hockey",
+    "fr": "Hockey",
+    "es": "Hockey",
+    "ja": "ホッケー"
+  },
+  "Hunting": {
+    "de": "Jagd",
+    "fr": "Chasse",
+    "es": "Caza",
+    "ja": "狩猟"
+  },
+  "Include Sensor Data": {
+    "de": "Sensordaten einschließen",
+    "fr": "Inclure les capteurs",
+    "es": "Incluir datos de sensores",
+    "ja": "センサーデータを含める"
+  },
+  "Jump Rope": {
+    "de": "Seilspringen",
+    "fr": "Corde à sauter",
+    "es": "Comba",
+    "ja": "なわとび"
+  },
+  "Kickboxing": {
+    "de": "Kickboxen",
+    "fr": "Kickboxing",
+    "es": "Kickboxing",
+    "ja": "キックボクシング"
+  },
+  "Lacrosse": {
+    "de": "Lacrosse",
+    "fr": "Crosse",
+    "es": "Lacrosse",
+    "ja": "ラクロス"
+  },
+  "Last 3 Months": {
+    "de": "Letzte 3 Monate",
+    "fr": "3 derniers mois",
+    "es": "Últimos 3 meses",
+    "ja": "過去3か月"
+  },
+  "Last Month": {
+    "de": "Letzter Monat",
+    "fr": "Dernier mois",
+    "es": "Último mes",
+    "ja": "過去1か月"
+  },
+  "Last Week": {
+    "de": "Letzte Woche",
+    "fr": "Dernière semaine",
+    "es": "Última semana",
+    "ja": "過去1週間"
+  },
+  "Last Year": {
+    "de": "Letztes Jahr",
+    "fr": "Dernière année",
+    "es": "Último año",
+    "ja": "過去1年"
+  },
+  "Loading route data...": {
+    "de": "Routendaten werden geladen …",
+    "fr": "Chargement du parcours…",
+    "es": "Cargando la ruta…",
+    "ja": "ルートを読み込み中…"
+  },
+  "Loading workouts...": {
+    "de": "Workouts werden geladen …",
+    "fr": "Chargement des séances…",
+    "es": "Cargando entrenamientos…",
+    "ja": "ワークアウトを読み込み中…"
+  },
+  "Low": {
+    "de": "Niedrig",
+    "fr": "Bas",
+    "es": "Bajo",
+    "ja": "低"
+  },
+  "Map": {
+    "de": "Karte",
+    "fr": "Carte",
+    "es": "Mapa",
+    "ja": "地図"
+  },
+  "Map Style": {
+    "de": "Kartenstil",
+    "fr": "Style de carte",
+    "es": "Estilo de mapa",
+    "ja": "地図の種類"
+  },
+  "Martial Arts": {
+    "de": "Kampfsport",
+    "fr": "Arts martiaux",
+    "es": "Artes marciales",
+    "ja": "格闘技"
+  },
+  "Max: %@": {
+    "de": "Max: %@",
+    "fr": "Max : %@",
+    "es": "Máx: %@",
+    "ja": "最高: %@"
+  },
+  "Min: %@": {
+    "de": "Min: %@",
+    "fr": "Min : %@",
+    "es": "Mín: %@",
+    "ja": "最低: %@"
+  },
+  "Mind & Body": {
+    "de": "Körper & Geist",
+    "fr": "Corps et esprit",
+    "es": "Cuerpo y mente",
+    "ja": "マインド＆ボディ"
+  },
+  "Mixed Cardio": {
+    "de": "Gemischtes Cardio",
+    "fr": "Cardio mixte",
+    "es": "Cardio mixto",
+    "ja": "ミックスカーディオ"
+  },
+  "More detail shows every point in the elevation chart; less is faster on very long routes.": {
+    "de": "Mehr Detail zeigt jeden Punkt im Höhendiagramm; weniger ist bei sehr langen Routen schneller.",
+    "fr": "Plus de détail affiche chaque point du graphique d'altitude ; moins est plus rapide sur les très longs parcours.",
+    "es": "Más detalle muestra cada punto en la gráfica de altitud; menos es más rápido en rutas muy largas.",
+    "ja": "詳細度を上げると標高グラフにすべての点を表示します。下げると長いルートで速くなります。"
+  },
+  "No GPS data": {
+    "de": "Keine GPS-Daten",
+    "fr": "Pas de GPS",
+    "es": "Sin datos GPS",
+    "ja": "GPSデータなし"
+  },
+  "No route data available": {
+    "de": "Keine Routendaten vorhanden",
+    "fr": "Aucun parcours disponible",
+    "es": "No hay datos de ruta",
+    "ja": "ルートデータがありません"
+  },
+  "No workouts found": {
+    "de": "Keine Workouts gefunden",
+    "fr": "Aucune séance trouvée",
+    "es": "No hay entrenamientos",
+    "ja": "ワークアウトが見つかりません"
+  },
+  "No workouts in this date range yet — adjust the dates and apply.": {
+    "de": "Noch keine Workouts in diesem Zeitraum. Passe die Daten an und wende den Filter an.",
+    "fr": "Aucune séance sur cette période. Modifiez les dates et appliquez.",
+    "es": "No hay entrenamientos en este periodo. Ajusta las fechas y aplica.",
+    "ja": "この期間にワークアウトはありません。日付を変えて適用してください。"
+  },
+  "OK": {
+    "de": "OK",
+    "fr": "OK",
+    "es": "OK",
+    "ja": "OK"
+  },
+  "Open Health Settings": {
+    "de": "Health-Einstellungen öffnen",
+    "fr": "Ouvrir les réglages Santé",
+    "es": "Abrir ajustes de Salud",
+    "ja": "ヘルスケアの設定を開く"
+  },
+  "Open your exports on Mac, iPhone and iPad: the climb in colour, heart rate and power charted, moving time and splits. Free.": {
+    "de": "Öffne deine Exporte auf Mac, iPhone und iPad: der Anstieg in Farbe, Herzfrequenz und Leistung im Diagramm, Bewegungszeit und Splits. Kostenlos.",
+    "fr": "Ouvrez vos exports sur Mac, iPhone et iPad : la pente en couleur, cardio et puissance tracés, temps en mouvement et intermédiaires. Gratuit.",
+    "es": "Abre tus exportaciones en Mac, iPhone y iPad: la pendiente en color, pulso y potencia en gráfica, tiempo en movimiento y parciales. Gratis.",
+    "ja": "書き出したファイルをMac・iPhone・iPadで開けます。勾配は色で、心拍とパワーはグラフで、移動時間とスプリットも。無料。"
+  },
+  "Other": {
+    "de": "Sonstiges",
+    "fr": "Autre",
+    "es": "Otro",
+    "ja": "その他"
+  },
+  "Paddling": {
+    "de": "Paddeln",
+    "fr": "Pagaie",
+    "es": "Remo con pala",
+    "ja": "パドルスポーツ"
+  },
+  "Pickleball": {
+    "de": "Pickleball",
+    "fr": "Pickleball",
+    "es": "Pickleball",
+    "ja": "ピックルボール"
+  },
+  "Pilates": {
+    "de": "Pilates",
+    "fr": "Pilates",
+    "es": "Pilates",
+    "ja": "ピラティス"
+  },
+  "Play": {
+    "de": "Spielen",
+    "fr": "Jeu",
+    "es": "Juego",
+    "ja": "遊び"
+  },
+  "Privacy": {
+    "de": "Datenschutz",
+    "fr": "Confidentialité",
+    "es": "Privacidad",
+    "ja": "プライバシー"
+  },
+  "Racquetball": {
+    "de": "Racquetball",
+    "fr": "Racquetball",
+    "es": "Racquetball",
+    "ja": "ラケットボール"
+  },
+  "Recovery": {
+    "de": "Erholung",
+    "fr": "Récupération",
+    "es": "Recuperación",
+    "ja": "リカバリー"
+  },
+  "Request Health Permission": {
+    "de": "Health-Zugriff anfragen",
+    "fr": "Demander l'accès à Santé",
+    "es": "Pedir permiso de Salud",
+    "ja": "ヘルスケアのアクセスを許可"
+  },
+  "Route Coloring": {
+    "de": "Routenfärbung",
+    "fr": "Couleur du parcours",
+    "es": "Color de la ruta",
+    "ja": "ルートの色分け"
+  },
+  "Route Info": {
+    "de": "Routeninfo",
+    "fr": "Infos parcours",
+    "es": "Info de ruta",
+    "ja": "ルート情報"
+  },
+  "Rowing": {
+    "de": "Rudern",
+    "fr": "Aviron",
+    "es": "Remo",
+    "ja": "ローイング"
+  },
+  "Rugby": {
+    "de": "Rugby",
+    "fr": "Rugby",
+    "es": "Rugby",
+    "ja": "ラグビー"
+  },
+  "Running": {
+    "de": "Laufen",
+    "fr": "Course",
+    "es": "Correr",
+    "ja": "ランニング"
+  },
+  "Sailing": {
+    "de": "Segeln",
+    "fr": "Voile",
+    "es": "Vela",
+    "ja": "セーリング"
+  },
+  "Select": {
+    "de": "Auswählen",
+    "fr": "Sélectionner",
+    "es": "Seleccionar",
+    "ja": "選択"
+  },
+  "Select All": {
+    "de": "Alle auswählen",
+    "fr": "Tout sélectionner",
+    "es": "Seleccionar todo",
+    "ja": "すべて選択"
+  },
+  "Selected": {
+    "de": "Ausgewählt",
+    "fr": "Sélection",
+    "es": "Seleccionado",
+    "ja": "選択"
+  },
+  "Settings": {
+    "de": "Einstellungen",
+    "fr": "Réglages",
+    "es": "Ajustes",
+    "ja": "設定"
+  },
   "Share %lld Files": {
-    "en": {"one": "Share %lld File", "other": "Share %lld Files"},
-    "de": {"one": "%lld Datei teilen", "other": "%lld Dateien teilen"},
-    "fr": {"one": "Partager %lld fichier", "other": "Partager %lld fichiers"},
-    "es": {"one": "Compartir %lld archivo", "other": "Compartir %lld archivos"},
-    "ja": {"other": "%lld個のファイルを共有"}
+    "en": {
+      "one": "Share %lld File",
+      "other": "Share %lld Files"
+    },
+    "de": {
+      "one": "%lld Datei teilen",
+      "other": "%lld Dateien teilen"
+    },
+    "fr": {
+      "one": "Partager %lld fichier",
+      "other": "Partager %lld fichiers"
+    },
+    "es": {
+      "one": "Compartir %lld archivo",
+      "other": "Compartir %lld archivos"
+    },
+    "ja": {
+      "other": "%lld個のファイルを共有"
+    }
   },
-  "Share 1 File": {"de": "1 Datei teilen", "fr": "Partager 1 fichier", "es": "Compartir 1 archivo", "ja": "1個のファイルを共有"},
-  "Show Elevation Chart by Default": {"de": "Höhendiagramm standardmäßig zeigen", "fr": "Graphique d'altitude par défaut", "es": "Mostrar gráfica de altitud por defecto", "ja": "標高グラフを最初から表示"},
-  "Show Route Info by Default": {"de": "Routeninfo standardmäßig zeigen", "fr": "Infos parcours par défaut", "es": "Mostrar info de ruta por defecto", "ja": "ルート情報を最初から表示"},
-  "Show workouts without GPS": {"de": "Workouts ohne GPS zeigen", "fr": "Afficher les séances sans GPS", "es": "Mostrar entrenamientos sin GPS", "ja": "GPSのないワークアウトも表示"},
-  "Skating": {"de": "Skaten", "fr": "Patinage", "es": "Patinaje", "ja": "スケート"},
-  "Snow Sports": {"de": "Schneesport", "fr": "Sports de neige", "es": "Deportes de nieve", "ja": "スノースポーツ"},
-  "Snowboarding": {"de": "Snowboarden", "fr": "Snowboard", "es": "Snowboard", "ja": "スノーボード"},
-  "Soccer": {"de": "Fußball", "fr": "Football", "es": "Fútbol", "ja": "サッカー"},
-  "Social Dance": {"de": "Gesellschaftstanz", "fr": "Danse sociale", "es": "Baile social", "ja": "ソーシャルダンス"},
-  "Softball": {"de": "Softball", "fr": "Softball", "es": "Sóftbol", "ja": "ソフトボール"},
-  "Squash": {"de": "Squash", "fr": "Squash", "es": "Squash", "ja": "スカッシュ"},
-  "Stair Climbing": {"de": "Treppensteigen", "fr": "Montée d'escaliers", "es": "Subir escaleras", "ja": "階段昇降"},
-  "Stairs": {"de": "Treppen", "fr": "Escaliers", "es": "Escaleras", "ja": "階段"},
-  "Start Date": {"de": "Startdatum", "fr": "Date de début", "es": "Fecha inicial", "ja": "開始日"},
-  "Started: %@ %@": {"de": "Start: %@ %@", "fr": "Début : %@ %@", "es": "Inicio: %@ %@", "ja": "開始: %@ %@"},
-  "Step Training": {"de": "Step-Training", "fr": "Step", "es": "Step", "ja": "ステップトレーニング"},
-  "Strength Training": {"de": "Krafttraining", "fr": "Musculation", "es": "Fuerza", "ja": "筋力トレーニング"},
-  "Surfing": {"de": "Surfen", "fr": "Surf", "es": "Surf", "ja": "サーフィン"},
-  "Swimming": {"de": "Schwimmen", "fr": "Natation", "es": "Natación", "ja": "水泳"},
-  "Table Tennis": {"de": "Tischtennis", "fr": "Tennis de table", "es": "Tenis de mesa", "ja": "卓球"},
-  "Tai Chi": {"de": "Tai-Chi", "fr": "Tai-chi", "es": "Taichí", "ja": "太極拳"},
-  "Tennis": {"de": "Tennis", "fr": "Tennis", "es": "Tenis", "ja": "テニス"},
-  "This app needs access to your Health data to export workout information.": {"de": "Diese App braucht Zugriff auf deine Health-Daten, um Workouts zu exportieren.", "fr": "Cette app a besoin d'accéder à vos données Santé pour exporter les séances.", "es": "Esta app necesita acceso a tus datos de Salud para exportar los entrenamientos.", "ja": "ワークアウトを書き出すには、ヘルスケアのデータへのアクセスが必要です。"},
-  "This workout doesn't contain GPS data that can be exported": {"de": "Dieses Workout enthält keine GPS-Daten zum Exportieren", "fr": "Cette séance ne contient pas de données GPS à exporter", "es": "Este entrenamiento no tiene datos GPS que exportar", "ja": "このワークアウトには書き出せるGPSデータがありません"},
-  "Track & Field": {"de": "Leichtathletik", "fr": "Athlétisme", "es": "Atletismo", "ja": "陸上競技"},
-  "Track Line Width": {"de": "Linienbreite", "fr": "Épaisseur du trait", "es": "Grosor de la línea", "ja": "線の太さ"},
-  "Track Line Width: %lld": {"de": "Linienbreite: %lld", "fr": "Épaisseur du trait : %lld", "es": "Grosor de la línea: %lld", "ja": "線の太さ: %lld"},
-  "Try Again": {"de": "Erneut versuchen", "fr": "Réessayer", "es": "Reintentar", "ja": "再試行"},
-  "Try adjusting your filters or timeframe": {"de": "Passe Filter oder Zeitraum an", "fr": "Modifiez les filtres ou la période", "es": "Prueba a cambiar los filtros o el periodo", "ja": "フィルタや期間を変えてみてください"},
-  "Units": {"de": "Einheiten", "fr": "Unités", "es": "Unidades", "ja": "単位"},
-  "Use Metric System (km)": {"de": "Metrisches System (km)", "fr": "Système métrique (km)", "es": "Sistema métrico (km)", "ja": "メートル法 (km)"},
-  "Volleyball": {"de": "Volleyball", "fr": "Volley-ball", "es": "Voleibol", "ja": "バレーボール"},
-  "Walking": {"de": "Gehen", "fr": "Marche", "es": "Caminar", "ja": "ウォーキング"},
-  "Water Fitness": {"de": "Wasserfitness", "fr": "Aquagym", "es": "Fitness acuático", "ja": "アクアフィットネス"},
-  "Water Polo": {"de": "Wasserball", "fr": "Water-polo", "es": "Waterpolo", "ja": "水球"},
-  "Water Sports": {"de": "Wassersport", "fr": "Sports nautiques", "es": "Deportes acuáticos", "ja": "ウォータースポーツ"},
-  "Wheelchair Run": {"de": "Rollstuhl, Lauftempo", "fr": "Fauteuil, allure course", "es": "Silla de ruedas, ritmo carrera", "ja": "車いす（ランペース）"},
-  "Wheelchair Walk": {"de": "Rollstuhl, Gehtempo", "fr": "Fauteuil, allure marche", "es": "Silla de ruedas, ritmo paseo", "ja": "車いす（ウォークペース）"},
-  "Workout": {"de": "Workout", "fr": "Séance", "es": "Entrenamiento", "ja": "ワークアウト"},
-  "Workout GPX Exporter": {"de": "Workout-GPX-Export", "fr": "Export GPX des séances", "es": "Exportador GPX de entrenos", "ja": "ワークアウトGPX書き出し"},
-  "Workout Types": {"de": "Aktivitäten", "fr": "Types de séance", "es": "Tipos de entrenamiento", "ja": "種目"},
-  "Wrestling": {"de": "Ringen", "fr": "Lutte", "es": "Lucha", "ja": "レスリング"},
-  "Yoga": {"de": "Yoga", "fr": "Yoga", "es": "Yoga", "ja": "ヨガ"},
-  "Standard": {"de": "Standard", "fr": "Standard", "es": "Estándar", "ja": "標準"},
-  "Satellite": {"de": "Satellit", "fr": "Satellite", "es": "Satélite", "ja": "航空写真"},
-  "Hybrid": {"de": "Hybrid", "fr": "Hybride", "es": "Híbrido", "ja": "ハイブリッド"},
-  "Effort": {"de": "Anstrengung", "fr": "Effort", "es": "Esfuerzo", "ja": "負荷"},
-  "Gradient": {"de": "Höhenverlauf", "fr": "Dégradé", "es": "Gradiente", "ja": "標高グラデーション"},
-  "Colors based on combined effort (grade and distance)": {"de": "Farben nach Anstrengung (Steigung und Distanz)", "fr": "Couleurs selon l'effort (pente et distance)", "es": "Colores según el esfuerzo (pendiente y distancia)", "ja": "負荷（勾配と距離）に応じた色"},
-  "Colors based purely on elevation gradient": {"de": "Farben rein nach Höhe", "fr": "Couleurs selon l'altitude seule", "es": "Colores solo según la altitud", "ja": "標高のみに応じた色"}
+  "Share 1 File": {
+    "de": "1 Datei teilen",
+    "fr": "Partager 1 fichier",
+    "es": "Compartir 1 archivo",
+    "ja": "1個のファイルを共有"
+  },
+  "Show Elevation Chart by Default": {
+    "de": "Höhendiagramm standardmäßig zeigen",
+    "fr": "Graphique d'altitude par défaut",
+    "es": "Mostrar gráfica de altitud por defecto",
+    "ja": "標高グラフを最初から表示"
+  },
+  "Show Route Info by Default": {
+    "de": "Routeninfo standardmäßig zeigen",
+    "fr": "Infos parcours par défaut",
+    "es": "Mostrar info de ruta por defecto",
+    "ja": "ルート情報を最初から表示"
+  },
+  "Show workouts without GPS": {
+    "de": "Workouts ohne GPS zeigen",
+    "fr": "Afficher les séances sans GPS",
+    "es": "Mostrar entrenamientos sin GPS",
+    "ja": "GPSのないワークアウトも表示"
+  },
+  "Skating": {
+    "de": "Skaten",
+    "fr": "Patinage",
+    "es": "Patinaje",
+    "ja": "スケート"
+  },
+  "Snow Sports": {
+    "de": "Schneesport",
+    "fr": "Sports de neige",
+    "es": "Deportes de nieve",
+    "ja": "スノースポーツ"
+  },
+  "Snowboarding": {
+    "de": "Snowboarden",
+    "fr": "Snowboard",
+    "es": "Snowboard",
+    "ja": "スノーボード"
+  },
+  "Soccer": {
+    "de": "Fußball",
+    "fr": "Football",
+    "es": "Fútbol",
+    "ja": "サッカー"
+  },
+  "Social Dance": {
+    "de": "Gesellschaftstanz",
+    "fr": "Danse sociale",
+    "es": "Baile social",
+    "ja": "ソーシャルダンス"
+  },
+  "Softball": {
+    "de": "Softball",
+    "fr": "Softball",
+    "es": "Sóftbol",
+    "ja": "ソフトボール"
+  },
+  "Squash": {
+    "de": "Squash",
+    "fr": "Squash",
+    "es": "Squash",
+    "ja": "スカッシュ"
+  },
+  "Stair Climbing": {
+    "de": "Treppensteigen",
+    "fr": "Montée d'escaliers",
+    "es": "Subir escaleras",
+    "ja": "階段昇降"
+  },
+  "Stairs": {
+    "de": "Treppen",
+    "fr": "Escaliers",
+    "es": "Escaleras",
+    "ja": "階段"
+  },
+  "Start Date": {
+    "de": "Startdatum",
+    "fr": "Date de début",
+    "es": "Fecha inicial",
+    "ja": "開始日"
+  },
+  "Started: %@ %@": {
+    "de": "Start: %@ %@",
+    "fr": "Début : %@ %@",
+    "es": "Inicio: %@ %@",
+    "ja": "開始: %@ %@"
+  },
+  "Step Training": {
+    "de": "Step-Training",
+    "fr": "Step",
+    "es": "Step",
+    "ja": "ステップトレーニング"
+  },
+  "Strength Training": {
+    "de": "Krafttraining",
+    "fr": "Musculation",
+    "es": "Fuerza",
+    "ja": "筋力トレーニング"
+  },
+  "Surfing": {
+    "de": "Surfen",
+    "fr": "Surf",
+    "es": "Surf",
+    "ja": "サーフィン"
+  },
+  "Swimming": {
+    "de": "Schwimmen",
+    "fr": "Natation",
+    "es": "Natación",
+    "ja": "水泳"
+  },
+  "Table Tennis": {
+    "de": "Tischtennis",
+    "fr": "Tennis de table",
+    "es": "Tenis de mesa",
+    "ja": "卓球"
+  },
+  "Tai Chi": {
+    "de": "Tai-Chi",
+    "fr": "Tai-chi",
+    "es": "Taichí",
+    "ja": "太極拳"
+  },
+  "Tennis": {
+    "de": "Tennis",
+    "fr": "Tennis",
+    "es": "Tenis",
+    "ja": "テニス"
+  },
+  "This app needs access to your Health data to export workout information.": {
+    "de": "Diese App braucht Zugriff auf deine Health-Daten, um Workouts zu exportieren.",
+    "fr": "Cette app a besoin d'accéder à vos données Santé pour exporter les séances.",
+    "es": "Esta app necesita acceso a tus datos de Salud para exportar los entrenamientos.",
+    "ja": "ワークアウトを書き出すには、ヘルスケアのデータへのアクセスが必要です。"
+  },
+  "This workout doesn't contain GPS data that can be exported": {
+    "de": "Dieses Workout enthält keine GPS-Daten zum Exportieren",
+    "fr": "Cette séance ne contient pas de données GPS à exporter",
+    "es": "Este entrenamiento no tiene datos GPS que exportar",
+    "ja": "このワークアウトには書き出せるGPSデータがありません"
+  },
+  "Track & Field": {
+    "de": "Leichtathletik",
+    "fr": "Athlétisme",
+    "es": "Atletismo",
+    "ja": "陸上競技"
+  },
+  "Track Line Width": {
+    "de": "Linienbreite",
+    "fr": "Épaisseur du trait",
+    "es": "Grosor de la línea",
+    "ja": "線の太さ"
+  },
+  "Track Line Width: %lld": {
+    "de": "Linienbreite: %lld",
+    "fr": "Épaisseur du trait : %lld",
+    "es": "Grosor de la línea: %lld",
+    "ja": "線の太さ: %lld"
+  },
+  "Try Again": {
+    "de": "Erneut versuchen",
+    "fr": "Réessayer",
+    "es": "Reintentar",
+    "ja": "再試行"
+  },
+  "Try adjusting your filters or timeframe": {
+    "de": "Passe Filter oder Zeitraum an",
+    "fr": "Modifiez les filtres ou la période",
+    "es": "Prueba a cambiar los filtros o el periodo",
+    "ja": "フィルタや期間を変えてみてください"
+  },
+  "Units": {
+    "de": "Einheiten",
+    "fr": "Unités",
+    "es": "Unidades",
+    "ja": "単位"
+  },
+  "Use Metric System (km)": {
+    "de": "Metrisches System (km)",
+    "fr": "Système métrique (km)",
+    "es": "Sistema métrico (km)",
+    "ja": "メートル法 (km)"
+  },
+  "Volleyball": {
+    "de": "Volleyball",
+    "fr": "Volley-ball",
+    "es": "Voleibol",
+    "ja": "バレーボール"
+  },
+  "Walking": {
+    "de": "Gehen",
+    "fr": "Marche",
+    "es": "Caminar",
+    "ja": "ウォーキング"
+  },
+  "Water Fitness": {
+    "de": "Wasserfitness",
+    "fr": "Aquagym",
+    "es": "Fitness acuático",
+    "ja": "アクアフィットネス"
+  },
+  "Water Polo": {
+    "de": "Wasserball",
+    "fr": "Water-polo",
+    "es": "Waterpolo",
+    "ja": "水球"
+  },
+  "Water Sports": {
+    "de": "Wassersport",
+    "fr": "Sports nautiques",
+    "es": "Deportes acuáticos",
+    "ja": "ウォータースポーツ"
+  },
+  "Wheelchair Run": {
+    "de": "Rollstuhl, Lauftempo",
+    "fr": "Fauteuil, allure course",
+    "es": "Silla de ruedas, ritmo carrera",
+    "ja": "車いす（ランペース）"
+  },
+  "Wheelchair Walk": {
+    "de": "Rollstuhl, Gehtempo",
+    "fr": "Fauteuil, allure marche",
+    "es": "Silla de ruedas, ritmo paseo",
+    "ja": "車いす（ウォークペース）"
+  },
+  "Workout": {
+    "de": "Workout",
+    "fr": "Séance",
+    "es": "Entrenamiento",
+    "ja": "ワークアウト"
+  },
+  "Workout GPX Exporter": {
+    "de": "Workout-GPX-Export",
+    "fr": "Export GPX des séances",
+    "es": "Exportador GPX de entrenos",
+    "ja": "ワークアウトGPX書き出し"
+  },
+  "Workout Types": {
+    "de": "Aktivitäten",
+    "fr": "Types de séance",
+    "es": "Tipos de entrenamiento",
+    "ja": "種目"
+  },
+  "Wrestling": {
+    "de": "Ringen",
+    "fr": "Lutte",
+    "es": "Lucha",
+    "ja": "レスリング"
+  },
+  "Yoga": {
+    "de": "Yoga",
+    "fr": "Yoga",
+    "es": "Yoga",
+    "ja": "ヨガ"
+  },
+  "Standard": {
+    "de": "Standard",
+    "fr": "Standard",
+    "es": "Estándar",
+    "ja": "標準"
+  },
+  "Satellite": {
+    "de": "Satellit",
+    "fr": "Satellite",
+    "es": "Satélite",
+    "ja": "航空写真"
+  },
+  "Hybrid": {
+    "de": "Hybrid",
+    "fr": "Hybride",
+    "es": "Híbrido",
+    "ja": "ハイブリッド"
+  },
+  "Effort": {
+    "de": "Anstrengung",
+    "fr": "Effort",
+    "es": "Esfuerzo",
+    "ja": "負荷"
+  },
+  "Gradient": {
+    "de": "Höhenverlauf",
+    "fr": "Dégradé",
+    "es": "Gradiente",
+    "ja": "標高グラデーション"
+  },
+  "Colors based on combined effort (grade and distance)": {
+    "de": "Farben nach Anstrengung (Steigung und Distanz)",
+    "fr": "Couleurs selon l'effort (pente et distance)",
+    "es": "Colores según el esfuerzo (pendiente y distancia)",
+    "ja": "負荷（勾配と距離）に応じた色"
+  },
+  "Colors based purely on elevation gradient": {
+    "de": "Farben rein nach Höhe",
+    "fr": "Couleurs selon l'altitude seule",
+    "es": "Colores solo según la altitud",
+    "ja": "標高のみに応じた色"
+  },
+  "Start": {
+    "de": "Start",
+    "fr": "Départ",
+    "es": "Inicio",
+    "ja": "スタート"
+  },
+  "End": {
+    "de": "Ziel",
+    "fr": "Arrivée",
+    "es": "Fin",
+    "ja": "ゴール"
+  },
+  "Peak": {
+    "de": "Gipfel",
+    "fr": "Sommet",
+    "es": "Cima",
+    "ja": "ピーク"
+  },
+  "Valley": {
+    "de": "Tal",
+    "fr": "Creux",
+    "es": "Valle",
+    "ja": "谷"
+  }
 }
