@@ -49,7 +49,7 @@ struct WorkoutFilterView: View {
                         HStack(spacing: 10) {
                             // "All" chip: selected whenever no specific type is chosen
                             WorkoutTypeChip(
-                                title: "All",
+                                title: String(localized: "All"),
                                 icon: "star.circle",
                                 count: availableWorkoutTypes.reduce(0) { $0 + $1.count },
                                 isSelected: selectedWorkoutTypes.isEmpty

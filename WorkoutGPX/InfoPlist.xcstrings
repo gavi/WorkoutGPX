@@ -1,0 +1,24 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "NSHealthShareUsageDescription" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "This app needs access to your workout and route data to create GPX exports." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Diese App braucht Zugriff auf deine Workouts und Strecken, um GPX-Dateien zu erstellen." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Cette app a besoin d'accéder à vos séances et parcours pour créer les fichiers GPX." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Esta app necesita acceso a tus entrenamientos y rutas para crear los archivos GPX." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "GPXファイルを作成するため、ワークアウトと経路のデータへのアクセスが必要です。" } }
+      }
+    },
+    "NSHealthUpdateUsageDescription" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "This app does not modify your health data." } },
+        "de" : { "stringUnit" : { "state" : "translated", "value" : "Diese App verändert deine Gesundheitsdaten nicht." } },
+        "fr" : { "stringUnit" : { "state" : "translated", "value" : "Cette app ne modifie pas vos données de santé." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Esta app no modifica tus datos de salud." } },
+        "ja" : { "stringUnit" : { "state" : "translated", "value" : "このアプリはヘルスケアのデータを変更しません。" } }
+      }
+    }
+  },
+  "version" : "1.0"
+}

@@ -14,7 +14,7 @@ struct RouteInfoOverlay: View {
             let totalPoints = trackSegments.reduce(0) { $0 + $1.locations.count }
             let segmentCount = trackSegments.count
             
-            Text("\(totalPoints) data points in \(segmentCount) segment\(segmentCount == 1 ? "" : "s")")
+            Text("\(totalPoints) data points in \(segmentCount) segments")   // plural forms live in the string catalog
                 .font(.subheadline)
                 .foregroundColor(.secondary)
             
@@ -96,7 +96,7 @@ struct ElevationLegend: View {
         }
     }
     
-    private var labels: (top: String, bottom: String) {
+    private var labels: (top: LocalizedStringKey, bottom: LocalizedStringKey) {
         switch mode {
         case .gradient: return ("High", "Low")
         case .effort: return ("Climb", "Descent")

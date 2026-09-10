@@ -126,7 +126,7 @@ struct WorkoutDetailView: View {
                     
                     Picker("Route Coloring", selection: $settings.elevationVisualizationMode) {
                         ForEach(ElevationVisualizationMode.allCases) { mode in
-                            Text(mode.rawValue).tag(mode)
+                            Text(mode.title).tag(mode)
                         }
                     }
                 } label: {

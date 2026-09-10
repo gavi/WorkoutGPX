@@ -2,7 +2,7 @@ import SwiftUI
 
 // Quick date selection button
 struct QuickDateButton: View {
-    let title: String
+    let title: LocalizedStringKey
     let action: () -> Void
     
     var body: some View {

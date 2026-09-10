@@ -8,6 +8,7 @@ enum MapStyle: String, CaseIterable, Identifiable {
     case hybrid = "Hybrid"
     
     var id: String { self.rawValue }
+    var title: LocalizedStringKey { LocalizedStringKey(rawValue) }   // stored value stays English; the UI shows the title
     
     var iconName: String {
         switch self {
@@ -40,6 +41,7 @@ enum ElevationVisualizationMode: String, CaseIterable, Identifiable {
     case gradient = "Gradient" // Absolute elevation: low blue → high red
     
     var id: String { self.rawValue }
+    var title: LocalizedStringKey { LocalizedStringKey(rawValue) }
     
     var description: String {
         switch self {

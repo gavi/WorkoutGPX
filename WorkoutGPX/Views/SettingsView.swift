@@ -22,7 +22,7 @@ struct SettingsView: View {
             Section(header: Text("Map")) {
                 Picker("Map Style", selection: $settings.mapStyle) {
                     ForEach(MapStyle.allCases) { style in
-                        Text(style.rawValue).tag(style)
+                        Text(style.title).tag(style)
                     }
                 }
                 .pickerStyle(SegmentedPickerStyle())
@@ -41,11 +41,11 @@ struct SettingsView: View {
             
             Section(
                 header: Text("Elevation"),
-                footer: Text(settings.elevationVisualizationMode.description)
+                footer: Text(LocalizedStringKey(settings.elevationVisualizationMode.description))
             ) {
                 Picker("Route Coloring", selection: $settings.elevationVisualizationMode) {
                     ForEach(ElevationVisualizationMode.allCases) { mode in
-                        Text(mode.rawValue).tag(mode)
+                        Text(mode.title).tag(mode)
                     }
                 }
                 .pickerStyle(SegmentedPickerStyle())

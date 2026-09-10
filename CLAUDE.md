@@ -16,3 +16,13 @@
 - **SwiftUI**: Group view modifiers logically, extract subviews to separate structs for complex views
 - **HealthKit**: Handle permissions properly, check authorization status, use async/await for data queries
 - **File Organization**: One main component per file, extensions in separate files when they grow large
+
+## Localization
+- UI strings live in `WorkoutGPX/Localizable.xcstrings` (English source; German, French, Spanish,
+  Japanese) and `WorkoutGPX/InfoPlist.xcstrings`. The catalog is generated, not hand-edited:
+  translations are in `Localization/translations.json` (plural forms as `one`/`other`), keys
+  the compiler cannot see in `Localization/extra-keys.json`, and
+  `~/work/apple/tools/xcstrings.py` builds the catalog from a harvest of `*.stringsdata`
+  (skill `localize-app`). Write UI text as literal `Text("…")`/`LocalizedStringKey`; enums
+  shown in the UI expose a `title`; helpers that return display strings use `String(localized:)`;
+  never build plurals by appending "s".

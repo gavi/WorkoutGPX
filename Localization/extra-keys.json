@@ -1,0 +1,9 @@
+{
+  "Standard": {"en": "Standard"},
+  "Satellite": {"en": "Satellite"},
+  "Hybrid": {"en": "Hybrid"},
+  "Effort": {"en": "Effort"},
+  "Gradient": {"en": "Gradient"},
+  "Colors based on combined effort (grade and distance)": {"en": "Colors based on combined effort (grade and distance)"},
+  "Colors based purely on elevation gradient": {"en": "Colors based purely on elevation gradient"}
+}

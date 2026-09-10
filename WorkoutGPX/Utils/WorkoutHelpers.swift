@@ -4,86 +4,86 @@ import Foundation
 // Human-readable name for a workout activity type
 func workoutActivityTypeString(_ type: HKWorkoutActivityType) -> String {
     switch type {
-    case .running: return "Running"
-    case .walking: return "Walking"
-    case .hiking: return "Hiking"
-    case .cycling: return "Cycling"
-    case .handCycling: return "Hand Cycling"
-    case .wheelchairWalkPace: return "Wheelchair Walk"
-    case .wheelchairRunPace: return "Wheelchair Run"
-    case .swimming: return "Swimming"
-    case .paddleSports: return "Paddling"
-    case .rowing: return "Rowing"
-    case .sailing: return "Sailing"
-    case .surfingSports: return "Surfing"
-    case .waterFitness: return "Water Fitness"
-    case .waterPolo: return "Water Polo"
-    case .waterSports: return "Water Sports"
-    case .downhillSkiing: return "Downhill Skiing"
-    case .crossCountrySkiing: return "Cross-Country Skiing"
-    case .snowboarding: return "Snowboarding"
-    case .snowSports: return "Snow Sports"
-    case .skatingSports: return "Skating"
-    case .golf: return "Golf"
-    case .equestrianSports: return "Equestrian"
-    case .fishing: return "Fishing"
-    case .hunting: return "Hunting"
-    case .climbing: return "Climbing"
-    case .elliptical: return "Elliptical"
-    case .stairClimbing: return "Stair Climbing"
-    case .stairs: return "Stairs"
-    case .stepTraining: return "Step Training"
-    case .jumpRope: return "Jump Rope"
-    case .functionalStrengthTraining: return "Functional Strength"
-    case .traditionalStrengthTraining: return "Strength Training"
-    case .coreTraining: return "Core Training"
-    case .crossTraining: return "Cross Training"
-    case .mixedCardio: return "Mixed Cardio"
-    case .highIntensityIntervalTraining: return "HIIT"
-    case .yoga: return "Yoga"
-    case .pilates: return "Pilates"
-    case .taiChi: return "Tai Chi"
-    case .flexibility: return "Flexibility"
-    case .cooldown: return "Cooldown"
-    case .preparationAndRecovery: return "Recovery"
-    case .mindAndBody: return "Mind & Body"
-    case .barre: return "Barre"
-    case .dance: return "Dance"
-    case .socialDance: return "Social Dance"
-    case .cardioDance: return "Cardio Dance"
-    case .boxing: return "Boxing"
-    case .kickboxing: return "Kickboxing"
-    case .martialArts: return "Martial Arts"
-    case .wrestling: return "Wrestling"
-    case .fencing: return "Fencing"
-    case .archery: return "Archery"
-    case .soccer: return "Soccer"
-    case .americanFootball: return "American Football"
-    case .australianFootball: return "Australian Football"
-    case .rugby: return "Rugby"
-    case .basketball: return "Basketball"
-    case .baseball: return "Baseball"
-    case .softball: return "Softball"
-    case .cricket: return "Cricket"
-    case .hockey: return "Hockey"
-    case .lacrosse: return "Lacrosse"
-    case .volleyball: return "Volleyball"
-    case .handball: return "Handball"
-    case .tennis: return "Tennis"
-    case .tableTennis: return "Table Tennis"
-    case .badminton: return "Badminton"
-    case .squash: return "Squash"
-    case .racquetball: return "Racquetball"
-    case .pickleball: return "Pickleball"
-    case .discSports: return "Disc Sports"
-    case .bowling: return "Bowling"
-    case .curling: return "Curling"
-    case .gymnastics: return "Gymnastics"
-    case .trackAndField: return "Track & Field"
-    case .play: return "Play"
-    case .fitnessGaming: return "Fitness Gaming"
-    case .other: return "Other"
-    default: return "Workout"
+    case .running: return String(localized: "Running")
+    case .walking: return String(localized: "Walking")
+    case .hiking: return String(localized: "Hiking")
+    case .cycling: return String(localized: "Cycling")
+    case .handCycling: return String(localized: "Hand Cycling")
+    case .wheelchairWalkPace: return String(localized: "Wheelchair Walk")
+    case .wheelchairRunPace: return String(localized: "Wheelchair Run")
+    case .swimming: return String(localized: "Swimming")
+    case .paddleSports: return String(localized: "Paddling")
+    case .rowing: return String(localized: "Rowing")
+    case .sailing: return String(localized: "Sailing")
+    case .surfingSports: return String(localized: "Surfing")
+    case .waterFitness: return String(localized: "Water Fitness")
+    case .waterPolo: return String(localized: "Water Polo")
+    case .waterSports: return String(localized: "Water Sports")
+    case .downhillSkiing: return String(localized: "Downhill Skiing")
+    case .crossCountrySkiing: return String(localized: "Cross-Country Skiing")
+    case .snowboarding: return String(localized: "Snowboarding")
+    case .snowSports: return String(localized: "Snow Sports")
+    case .skatingSports: return String(localized: "Skating")
+    case .golf: return String(localized: "Golf")
+    case .equestrianSports: return String(localized: "Equestrian")
+    case .fishing: return String(localized: "Fishing")
+    case .hunting: return String(localized: "Hunting")
+    case .climbing: return String(localized: "Climbing")
+    case .elliptical: return String(localized: "Elliptical")
+    case .stairClimbing: return String(localized: "Stair Climbing")
+    case .stairs: return String(localized: "Stairs")
+    case .stepTraining: return String(localized: "Step Training")
+    case .jumpRope: return String(localized: "Jump Rope")
+    case .functionalStrengthTraining: return String(localized: "Functional Strength")
+    case .traditionalStrengthTraining: return String(localized: "Strength Training")
+    case .coreTraining: return String(localized: "Core Training")
+    case .crossTraining: return String(localized: "Cross Training")
+    case .mixedCardio: return String(localized: "Mixed Cardio")
+    case .highIntensityIntervalTraining: return String(localized: "HIIT")
+    case .yoga: return String(localized: "Yoga")
+    case .pilates: return String(localized: "Pilates")
+    case .taiChi: return String(localized: "Tai Chi")
+    case .flexibility: return String(localized: "Flexibility")
+    case .cooldown: return String(localized: "Cooldown")
+    case .preparationAndRecovery: return String(localized: "Recovery")
+    case .mindAndBody: return String(localized: "Mind & Body")
+    case .barre: return String(localized: "Barre")
+    case .dance: return String(localized: "Dance")
+    case .socialDance: return String(localized: "Social Dance")
+    case .cardioDance: return String(localized: "Cardio Dance")
+    case .boxing: return String(localized: "Boxing")
+    case .kickboxing: return String(localized: "Kickboxing")
+    case .martialArts: return String(localized: "Martial Arts")
+    case .wrestling: return String(localized: "Wrestling")
+    case .fencing: return String(localized: "Fencing")
+    case .archery: return String(localized: "Archery")
+    case .soccer: return String(localized: "Soccer")
+    case .americanFootball: return String(localized: "American Football")
+    case .australianFootball: return String(localized: "Australian Football")
+    case .rugby: return String(localized: "Rugby")
+    case .basketball: return String(localized: "Basketball")
+    case .baseball: return String(localized: "Baseball")
+    case .softball: return String(localized: "Softball")
+    case .cricket: return String(localized: "Cricket")
+    case .hockey: return String(localized: "Hockey")
+    case .lacrosse: return String(localized: "Lacrosse")
+    case .volleyball: return String(localized: "Volleyball")
+    case .handball: return String(localized: "Handball")
+    case .tennis: return String(localized: "Tennis")
+    case .tableTennis: return String(localized: "Table Tennis")
+    case .badminton: return String(localized: "Badminton")
+    case .squash: return String(localized: "Squash")
+    case .racquetball: return String(localized: "Racquetball")
+    case .pickleball: return String(localized: "Pickleball")
+    case .discSports: return String(localized: "Disc Sports")
+    case .bowling: return String(localized: "Bowling")
+    case .curling: return String(localized: "Curling")
+    case .gymnastics: return String(localized: "Gymnastics")
+    case .trackAndField: return String(localized: "Track & Field")
+    case .play: return String(localized: "Play")
+    case .fitnessGaming: return String(localized: "Fitness Gaming")
+    case .other: return String(localized: "Other")
+    default: return String(localized: "Workout")
     }
 }
 
